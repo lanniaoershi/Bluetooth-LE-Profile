@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.android.bluetoothlegatt.RSCPActivity">
+    <item android:id="@+id/action_get_location"
+          android:title="get location"
+          android:orderInCategory="100"
+          android:showAsAction="never"/>
+</menu>
+<!-- From: file:/Users/Utopia/Downloads/BluetoothLeGatt/Application/src/main/res/menu/menu_rsc.xml -->

@@ -1,0 +1,7 @@
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/classes/debug
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-e5384ff2a828f966967cc874b91bb09fbab433f7.jar
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-51ea0dae4f63325474ed5cc7d98554492fbb19f3.jar
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-4e9ee19e2337634281a2d8e804ec14b3b1243fac.jar
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-ed515463eaa7a1663d6b7720a79cfb04798fe986.jar
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-e79bccb673917010a0163b010a810b12524a8670.jar
+/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-e96e6cb9d8a5271866a8803cd3c07d8b25251478.jar

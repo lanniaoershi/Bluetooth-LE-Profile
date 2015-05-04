@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/libs/internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9346da9fb778af9e451211bbc3541daced174ba7">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-e5384ff2a828f966967cc874b91bb09fbab433f7.jar" />
+    </item>
+    <item
+        jar="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.2/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b017100da14f9c158c9f5f2f508333c224b24a7c">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-ed515463eaa7a1663d6b7720a79cfb04798fe986.jar" />
+    </item>
+    <item
+        jar="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-e96e6cb9d8a5271866a8803cd3c07d8b25251478.jar" />
+    </item>
+    <item
+        jar="/Users/Utopia/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.2/support-annotations-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/support-annotations-21.0.2-51ea0dae4f63325474ed5cc7d98554492fbb19f3.jar" />
+    </item>
+    <item
+        jar="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.2/libs/internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-e79bccb673917010a0163b010a810b12524a8670.jar" />
+    </item>
+    <item
+        jar="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="61965ae058916e6a57950dd61b0164dc866af19a">
+        <dex dex="/Users/Utopia/Downloads/BluetoothLeGatt/Application/build/intermediates/pre-dexed/debug/classes-4e9ee19e2337634281a2d8e804ec14b3b1243fac.jar" />
+    </item>
+
+</items>
