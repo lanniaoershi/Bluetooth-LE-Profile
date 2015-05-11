@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/enable_notify"
         android:text="on/off"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 
 </LinearLayout>

@@ -220,6 +220,13 @@ public class RSCPActivity extends Activity {
             }
         });
 
+        mStartSensorCalibrationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRscpService.startCalibration();
+            }
+        });
+
         Intent rscpServiceIntent = new Intent(RSCPActivity.this, RscpService.class);
         bindService(rscpServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 

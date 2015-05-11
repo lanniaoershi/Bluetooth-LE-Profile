@@ -182,9 +182,10 @@ public class RscpService extends Service {
         mBluetoothRscp.setCumulativeValue(cumulativeValue);
     }
 
-    public void setIndicaion() {
-        mBluetoothRscp.setIndication();
+    public void startCalibration() {
+        mBluetoothRscp.startCalibration();
     }
+
 
     public String getSensorLocation() {
         return mBluetoothRscp.getSensorLocation();

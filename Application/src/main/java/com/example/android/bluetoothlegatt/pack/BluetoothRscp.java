@@ -104,8 +104,9 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                setCharacteristicNotification(true);
                 setCharacteristicIndication(true);
+                setCharacteristicNotification(true);
+
 
                 // sth wrong here
                 return;
@@ -368,9 +369,6 @@ public final class BluetoothRscp implements BluetoothProfile {
         Log.i("mylog", "set finish " + cumulativeValue);
     }
 
-    public void setIndication() {
-        setCharacteristicIndication(true);
-    }
 
     public static byte[] intToBytes( int value )
     {
@@ -380,6 +378,20 @@ public final class BluetoothRscp implements BluetoothProfile {
         src[1] =  (byte) ((value>>8) & 0xFF);
         src[0] =  (byte) (value & 0xFF);
         return src;
+    }
+
+    public void startCalibration() {
+        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
+        if (rscService == null) {
+            return;
+        }
+        BluetoothGattCharacteristic rscControlPointCharac = rscService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
+        if (rscControlPointCharac == null) {
+            return;
+        }
+        byte [] value = {0x02};
+        rscControlPointCharac.setValue(value);
+        mBluetoothGatt.writeCharacteristic(rscControlPointCharac);
     }
 
     @Override
