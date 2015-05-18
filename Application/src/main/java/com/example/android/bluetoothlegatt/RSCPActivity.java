@@ -15,9 +15,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.android.bluetoothlegatt.pack.BluetoothRscp;
@@ -51,6 +54,8 @@ public class RSCPActivity extends Activity {
     private Button mStartSensorCalibrationBtn;
     private Button mUpdateSensorLocationBtn;
     private Button mRequestSupportedSensorLocationBtn;
+
+    private Spinner mSpinner;
 
     private ProgressBar mFeatureProgressBar;
     private ProgressBar mLocationProgressBar;
@@ -163,8 +168,28 @@ public class RSCPActivity extends Activity {
         mFeatureProgressBar.setIndeterminate(true);
         mLocationProgressBar.setIndeterminate(true);
 
+        mSpinner = (Spinner) findViewById(R.id.spinner_sensor_location);
+
         mFeatureProgressBar.setVisibility(View.INVISIBLE);
         mLocationProgressBar.setVisibility(View.INVISIBLE);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location,android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(adapter);
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (mRscpService != null) {
+                    mRscpService.updateSensorLocation(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         mSetCumulativeValueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,26 +201,14 @@ public class RSCPActivity extends Activity {
         mBtnReadFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                BluetoothGattService rscpService = mRscpService.getBluetoothGatt().getService(BluetoothRscp.RSC_SERVICE);
-//                if (rscpService != null) {
-//                    mFeatureProgressBar.setVisibility(View.VISIBLE);
-//
-//                    BluetoothGattCharacteristic rscFeatureCharac = rscpService.getCharacteristic(BluetoothRscp.RSC_FEATURE_CHARAC);
-//                    mRscpService.readCharacteristic(rscFeatureCharac);
-//                }
-
+                    mRscpService.getSupportedFeature();
             }
         });
 
         mBtnReadSensorLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                BluetoothGattService rscpService = mRscpService.getBluetoothGatt().getService(BluetoothRscp.RSC_SERVICE);
-//                if (rscpService != null) {
-//                    mLocationProgressBar.setVisibility(View.VISIBLE);
-//                    BluetoothGattCharacteristic rscSensorLocationCharac = rscpService.getCharacteristic(BluetoothRscp.RSC_SENSOR_LOCATION_CHARAC);
-//                    mRscpService.readCharacteristic(rscSensorLocationCharac);
-//                }
+                mRscpService.getSensorLocation();
             }
         });
 
@@ -205,6 +218,12 @@ public class RSCPActivity extends Activity {
 //                mRscpService.setIndicaion();
 //            }
 //        });
+        mRequestSupportedSensorLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRscpService.getSupportedSensorLocation();
+            }
+        });
 
         mEnableNotify.setOnClickListener(new View.OnClickListener() {
             @Override

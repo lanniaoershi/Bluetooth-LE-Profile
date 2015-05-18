@@ -17,7 +17,7 @@ public abstract class BluetoothRscpCallback {
                                    boolean multipleSensorLocationSupported) {}
     public void onSensorLocationChange(String location) {}
     public void onCumulativeValueSet() {}
-    public void onSensorLocationSet(int location) {}
+    public void onUpdateSensorLocation(int location) {}
     public void onRequestOpCodeSet(int code) {}
     public void onResponseValueSet(int value) {}
     public void onResponseParameter(int param) {}

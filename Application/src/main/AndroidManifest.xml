@@ -56,7 +56,8 @@
 
         <activity
             android:name=".RSCPActivity"
-            android:label="@string/title_activity_rscp" >
+            android:label="@string/title_activity_rscp"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="com.example.android.bluetoothlegatt.ACTION_RSCP" />
 

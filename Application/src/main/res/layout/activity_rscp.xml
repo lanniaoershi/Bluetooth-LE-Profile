@@ -9,359 +9,386 @@
               android:paddingTop="@dimen/activity_vertical_margin"
               tools:context="com.example.android.bluetoothlegatt.RSCPActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connect State:"
-            android:textSize="20sp"
-            />
-
-        <TextView
-            android:id="@+id/connected_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unknown"
-            android:textSize="20sp"
-            />
-    </LinearLayout>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RSC Measurement Data"
-        android:textSize="20sp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/enable_notify"
-        android:text="on/off"
-        android:visibility="visible"/>
-
-
-</LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="motion:"/>
-
-        <TextView
-            android:id="@+id/motion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="speed:"/>
-
-        <TextView
-            android:id="@+id/speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="cadence:"/>
-
-        <TextView
-            android:id="@+id/cadence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="stride_length:"/>
-
-        <TextView
-            android:id="@+id/stride_length"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="total_distance:"/>
-
-        <TextView
-            android:id="@+id/total_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"/>
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#654783"/>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RSC Feature Data"
-        android:textSize="20sp"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_read_feature"
-        android:text="read"
-        />
-    <ProgressBar
-        android:id="@+id/progressbar_feature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-</LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="stride length mea supp:"/>
-
-        <TextView
-            android:id="@+id/stride_length_supported"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="total distance mea supp:"/>
-
-        <TextView
-            android:id="@+id/total_distance_supported"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="walking or running status:"/>
-
-        <TextView
-            android:id="@+id/walking_or_running_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="calibration supp:"/>
-
-        <TextView
-            android:id="@+id/calibration_supported"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="multiple sensor supp:"/>
-
-        <TextView
-            android:id="@+id/multi_sensor_supported"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="#654783"/>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RSC Sensor Location Data"
-        android:textSize="18sp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_read_sensor_location"
-        android:text="read"
-        />
-    <ProgressBar
-        android:id="@+id/progressbar_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-</LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="sensor location:"/>
-
-        <TextView
-            android:id="@+id/sensor_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="null"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SC Control Point"
-        android:textSize="20sp"/>
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:orientation="vertical">
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/cumulative_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="Cumulative value: "
-                android:textSize="8sp"
-                android:inputType="number"/>
-
-            <Button
-                android:id="@+id/btn_set_cumulative_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set Cumulative Value"
-                android:textSize="8sp"/>
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
-            <Button
-                android:id="@+id/btn_start_sensor_calibration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Sensor Calibration"
-                android:textSize="8sp"/>
-        </TableRow>
-
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_update_sensor_location"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Connect State:"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:id="@+id/connected_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Unknown"
+                    android:textSize="20sp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RSC Measurement Data"
+                    android:textSize="20sp"/>
+
+                <Button
+                    android:id="@+id/enable_notify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:background="#444444"
+                    android:text="on/off"
+                    android:textSize="12sp"
+                    android:visibility="visible"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="motion:"/>
+
+                <TextView
+                    android:id="@+id/motion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="speed:"/>
+
+                <TextView
+                    android:id="@+id/speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="cadence:"/>
+
+                <TextView
+                    android:id="@+id/cadence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="stride_length:"/>
+
+                <TextView
+                    android:id="@+id/stride_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="total_distance:"/>
+
+                <TextView
+                    android:id="@+id/total_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"/>
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="#654783"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RSC Feature Data"
+                    android:textSize="20sp"/>
+
+                <Button
+                    android:id="@+id/btn_read_feature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:background="#444444"
+                    android:text="read"
+                    android:textSize="12sp"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progressbar_feature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="stride length mea supp:"/>
+
+                <TextView
+                    android:id="@+id/stride_length_supported"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="total distance mea supp:"/>
+
+                <TextView
+                    android:id="@+id/total_distance_supported"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="walking or running status:"/>
+
+                <TextView
+                    android:id="@+id/walking_or_running_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="calibration supp:"/>
+
+                <TextView
+                    android:id="@+id/calibration_supported"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="multiple sensor supp:"/>
+
+                <TextView
+                    android:id="@+id/multi_sensor_supported"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="#654783"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RSC Sensor Location Data"
+                    android:textSize="18sp"/>
+
+                <Button
+                    android:id="@+id/btn_read_sensor_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:background="#444444"
+                    android:text="read"
+                    android:textSize="12sp"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/progressbar_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sensor location:"/>
+
+                <TextView
+                    android:id="@+id/sensor_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="null"/>
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Update Sensor Location"
-                android:textSize="10sp"/>
+                android:text="SC Control Point"
+                android:textSize="20sp"/>
 
-            <Button
-                android:id="@+id/btn_request_supported_sensor_location"
-                android:layout_width="wrap_content"
+            <TableLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Request supported Sensor Location"
-                android:textSize="10sp"/>
-        </TableRow>
+                android:background="#20000000"
+                android:orientation="vertical">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#55555555">
+
+                    <EditText
+                        android:id="@+id/cumulative_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="Cumulative value: "
+                        android:inputType="number"
+                        android:textSize="8sp"/>
+
+                    <Button
+                        android:id="@+id/btn_set_cumulative_value"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:text="Set Cumulative Value"
+                        android:textSize="8sp"/>
 
 
-    </TableLayout>
+                </TableRow>
 
+
+                <Button
+                    android:id="@+id/btn_start_sensor_calibration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start Sensor Calibration"
+                    android:textSize="8sp"/>
+
+
+                <Spinner
+                    android:id="@+id/spinner_sensor_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                   />
+
+
+                <Button
+                    android:id="@+id/btn_update_sensor_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update Sensor Location"
+                    android:textSize="10sp"/>
+
+
+                <Button
+                    android:id="@+id/btn_request_supported_sensor_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:text="Request supported Sensor Location"
+                    android:textSize="10sp"/>
+
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

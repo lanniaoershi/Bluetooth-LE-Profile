@@ -52,10 +52,10 @@ public class RscpService extends Service {
 
     public static final String RSC_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SENSOR_LOCATION_DATA";
 
-    public static final String RSC_SET_CUMULATIVE_VALUE = "com.example.android.bluetoothlegatt.RSC_SET_CUMULATIVE_VALUE";
-    public static final String RSC_START_SENSOR_CALIBRATION = "com.example.android.bluetoothlegatt.RSC_START_SENSOR_CALIBRATION";
-    public static final String RSC_UPDATE_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_UPDATE_SENSOR_LOCATION";
-    public static final String RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
+//    public static final String RSC_SET_CUMULATIVE_VALUE = "com.example.android.bluetoothlegatt.RSC_SET_CUMULATIVE_VALUE";
+//    public static final String RSC_START_SENSOR_CALIBRATION = "com.example.android.bluetoothlegatt.RSC_START_SENSOR_CALIBRATION";
+//    public static final String RSC_UPDATE_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_UPDATE_SENSOR_LOCATION";
+//    public static final String RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
 
 
 
@@ -114,6 +114,12 @@ public class RscpService extends Service {
         @Override
         public void onCumulativeValueSet() {
             Intent intent = new Intent(ACTION_RSC_CUMULATIVE_VALUE_SET);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void onUpdateSensorLocation(int location) {
+            Intent intent = new Intent(ACTION_RSC_UPDATE_SENSOR_LOCATION);
             sendBroadcast(intent);
         }
     };
@@ -178,20 +184,28 @@ public class RscpService extends Service {
         }
     }
 
-    public void setCumulativeValue(int cumulativeValue) {
-        mBluetoothRscp.setCumulativeValue(cumulativeValue);
+    public boolean setCumulativeValue(int cumulativeValue) {
+        return mBluetoothRscp.setCumulativeValue(cumulativeValue);
     }
 
     public void startCalibration() {
         mBluetoothRscp.startCalibration();
     }
 
+    public boolean updateSensorLocation (int location) {
+        return mBluetoothRscp.updateSensorLocation(location);
+    }
 
     public String getSensorLocation() {
         return mBluetoothRscp.getSensorLocation();
     }
-    public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        mBluetoothRscp.readCharacteristic(characteristic);
+
+    public void getSupportedFeature() {
+        mBluetoothRscp.getSupportedFeature();
+    }
+
+    public void getSupportedSensorLocation() {
+        mBluetoothRscp.getSupportedSensorLocation();
     }
 
 

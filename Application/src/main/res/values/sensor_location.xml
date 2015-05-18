@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensor_location">
+        <item>other</item>
+        <item>Top of shoe</item>
+        <item>In shoe</item>
+        <item>Hip</item>
+        <item>Front Wheel</item>
+        <item>Left Crank</item>
+        <item>Right Crank</item>
+        <item>Left Pedal</item>
+        <item>Right Pedal</item>
+        <item>Front Hub</item>
+        <item>Rear Dropout</item>
+        <item>Chainstay</item>
+        <item>Rear Wheel</item>
+        <item>Rear Hub</item>
+        <item>Chest</item>
+    </string-array>
+</resources>
