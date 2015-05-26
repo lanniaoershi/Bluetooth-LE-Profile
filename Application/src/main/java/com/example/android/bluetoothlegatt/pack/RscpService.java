@@ -3,19 +3,13 @@ package com.example.android.bluetoothlegatt.pack;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 
-import java.net.BindException;
-import java.util.UUID;
 
 public class RscpService extends Service {
 
@@ -105,9 +99,9 @@ public class RscpService extends Service {
         }
 
         @Override
-        public void onSensorLocationChange(String location) {
+        public void onSensorLocationChange() {
             Intent intent = new Intent(ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE);
-            intent.putExtra(RSC_SENSOR_LOCATION_DATA, location);
+            intent.putExtra(RSC_SENSOR_LOCATION_DATA, mBluetoothRscp.getSensorLocation());
             sendBroadcast(intent);
         }
 
