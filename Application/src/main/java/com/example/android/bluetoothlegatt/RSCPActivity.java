@@ -212,12 +212,6 @@ public class RSCPActivity extends Activity {
             }
         });
 
-//        mStartSensorCalibrationBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mRscpService.setIndicaion();
-//            }
-//        });
         mRequestSupportedSensorLocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
