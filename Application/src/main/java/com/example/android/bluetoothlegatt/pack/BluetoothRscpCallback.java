@@ -10,14 +10,16 @@ public abstract class BluetoothRscpCallback {
                               boolean isInstantaneousStrideLengthPresent,
                               boolean isTotalDistancePresent,
                               String walkingOrRunningState) {}
-    public void onRSCFeatureChange(boolean strideLengthMeasurementSupported,
-                                   boolean totalDistanceMeasurementSupported,
-                                   boolean walkingOrRunningStatusSupported,
-                                   boolean calibrationProcedureSupported,
-                                   boolean multipleSensorLocationSupported) {}
+    public void onRSCFeatureChange(boolean isStrideLengthMeasurementSupported,
+                                   boolean isTotalDistanceMeasurementSupported,
+                                   boolean isWalkingOrRunningStatusSupported,
+                                   boolean isCalibrationProcedureSupported,
+                                   boolean isMultipleSensorLocationSupported) {}
     public void onSensorLocationChange() {}
     public void onCumulativeValueSet() {}
-    public void onUpdateSensorLocation(int location) {}
+    public void onUpdateSensorLocation() {}
+    public void onStartCalibration() {}
+    public void onRequestSupportedSensorLocation() {}
     public void onRequestOpCodeSet(int code) {}
     public void onResponseValueSet(int value) {}
     public void onResponseParameter(int param) {}

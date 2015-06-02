@@ -45,6 +45,7 @@ public class RSCPActivity extends Activity {
     private TextView mCS;
     private TextView mMSLS;
     private TextView mSensorLocation;
+    private TextView mControlPointOpState;
     private Button mBtnReadFeature;
     private Button mBtnReadSensorLocation;
     private Button mEnableNotify;
@@ -52,13 +53,13 @@ public class RSCPActivity extends Activity {
     private EditText mCumulativeValue;
     private Button mSetCumulativeValueBtn;
     private Button mStartSensorCalibrationBtn;
-    private Button mUpdateSensorLocationBtn;
     private Button mRequestSupportedSensorLocationBtn;
 
     private Spinner mSpinner;
 
     private ProgressBar mFeatureProgressBar;
     private ProgressBar mLocationProgressBar;
+    private ProgressBar mControlPointprogressBar;
 
     private boolean mNotifyFlag = true;
 
@@ -117,13 +118,18 @@ public class RSCPActivity extends Activity {
                 mLocationProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_CUMULATIVE_VALUE_SET.equals(action)) {
-                mCumulativeValue.setText("success");
+                mControlPointOpState.setText("set cumulative value success");
+                mControlPointprogressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_START_SENSOR_CALIBRATION.equals(action)) {
 
-            } else if (RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION.equals(action)) {
+                mControlPointprogressBar.setVisibility(View.INVISIBLE);
 
+            } else if (RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION.equals(action)) {
+                mControlPointOpState.setText("update sensor location success");
+                mControlPointprogressBar.setVisibility(View.INVISIBLE);
             } else if (RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION.equals(action)) {
+                mControlPointprogressBar.setVisibility(View.INVISIBLE);
 
             }
 
@@ -135,6 +141,7 @@ public class RSCPActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rscp);
         Intent intent = getIntent();
+
         mDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
 
         mConnectState = (TextView) findViewById(R.id.connected_state);
@@ -151,6 +158,7 @@ public class RSCPActivity extends Activity {
         mMSLS = (TextView) findViewById(R.id.multi_sensor_supported);
 
         mSensorLocation = (TextView) findViewById(R.id.sensor_location);
+        mControlPointOpState = (TextView) findViewById(R.id.control_point_op_state);
 
         mEnableNotify = (Button) findViewById(R.id.enable_notify);
 
@@ -160,18 +168,20 @@ public class RSCPActivity extends Activity {
         mCumulativeValue = (EditText) findViewById(R.id.cumulative_value);
         mSetCumulativeValueBtn = (Button) findViewById(R.id.btn_set_cumulative_value);
         mStartSensorCalibrationBtn = (Button) findViewById(R.id.btn_start_sensor_calibration);
-        mUpdateSensorLocationBtn = (Button) findViewById(R.id.btn_update_sensor_location);
         mRequestSupportedSensorLocationBtn = (Button) findViewById(R.id.btn_request_supported_sensor_location);
 
         mFeatureProgressBar = (ProgressBar) findViewById(R.id.progressbar_feature);
         mLocationProgressBar = (ProgressBar) findViewById(R.id.progressbar_location);
+        mControlPointprogressBar = (ProgressBar) findViewById(R.id.progressbar_control_point);
         mFeatureProgressBar.setIndeterminate(true);
         mLocationProgressBar.setIndeterminate(true);
+        mControlPointprogressBar.setIndeterminate(true);
 
         mSpinner = (Spinner) findViewById(R.id.spinner_sensor_location);
 
         mFeatureProgressBar.setVisibility(View.INVISIBLE);
         mLocationProgressBar.setVisibility(View.INVISIBLE);
+        mControlPointprogressBar.setVisibility(View.INVISIBLE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location,android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
@@ -181,6 +191,7 @@ public class RSCPActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (mRscpService != null) {
                     mRscpService.updateSensorLocation(position);
+                    mControlPointprogressBar.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -195,6 +206,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mRscpService.setCumulativeValue(Integer.parseInt(mCumulativeValue.getText().toString()));
+                mControlPointprogressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -202,6 +214,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                     mRscpService.getSupportedFeature();
+                mFeatureProgressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -209,6 +222,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mRscpService.getSensorLocation();
+                mLocationProgressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -218,7 +232,7 @@ public class RSCPActivity extends Activity {
                 mRscpService.getSupportedSensorLocation();
             }
         });
-
+        mEnableNotify.setVisibility(View.INVISIBLE);
         mEnableNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

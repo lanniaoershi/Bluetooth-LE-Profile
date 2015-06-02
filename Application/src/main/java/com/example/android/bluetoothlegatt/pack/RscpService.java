@@ -112,8 +112,20 @@ public class RscpService extends Service {
         }
 
         @Override
-        public void onUpdateSensorLocation(int location) {
+        public void onUpdateSensorLocation() {
             Intent intent = new Intent(ACTION_RSC_UPDATE_SENSOR_LOCATION);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void onRequestSupportedSensorLocation() {
+            Intent intent = new Intent(ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void onStartCalibration() {
+            Intent intent = new Intent(ACTION_RSC_START_SENSOR_CALIBRATION);
             sendBroadcast(intent);
         }
     };

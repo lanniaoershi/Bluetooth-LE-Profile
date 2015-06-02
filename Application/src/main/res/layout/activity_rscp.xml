@@ -51,10 +51,9 @@
                 <Button
                     android:id="@+id/enable_notify"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:background="#444444"
+                    android:layout_height="wrap_content"
                     android:text="on/off"
-                    android:textSize="12sp"
+                    android:textSize="10sp"
                     android:visibility="visible"/>
 
 
@@ -169,8 +168,7 @@
                 <Button
                     android:id="@+id/btn_read_feature"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:background="#444444"
+                    android:layout_height="wrap_content"
                     android:text="read"
                     android:textSize="12sp"
                     />
@@ -178,7 +176,7 @@
                 <ProgressBar
                     android:id="@+id/progressbar_feature"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"/>
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -290,8 +288,7 @@
                 <Button
                     android:id="@+id/btn_read_sensor_location"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:background="#444444"
+                    android:layout_height="wrap_content"
                     android:text="read"
                     android:textSize="12sp"
                     />
@@ -299,7 +296,7 @@
                 <ProgressBar
                     android:id="@+id/progressbar_location"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     />
             </LinearLayout>
 
@@ -321,11 +318,29 @@
                     android:text="null"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SC Control Point"
-                android:textSize="20sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SC Control Point"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/control_point_op_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="state: unknown"
+                    android:textSize="10sp"/>
+                <ProgressBar
+                    android:id="@+id/progressbar_control_point"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    />
+            </LinearLayout>
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -335,8 +350,7 @@
 
                 <TableRow
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#55555555">
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/cumulative_value"
@@ -369,21 +383,13 @@
                     android:id="@+id/spinner_sensor_location"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                   />
-
-
-                <Button
-                    android:id="@+id/btn_update_sensor_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Update Sensor Location"
-                    android:textSize="10sp"/>
+                    />
 
 
                 <Button
                     android:id="@+id/btn_request_supported_sensor_location"
                     android:layout_width="wrap_content"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:text="Request supported Sensor Location"
                     android:textSize="10sp"/>
 
