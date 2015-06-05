@@ -1,2 +1,2 @@
-./Application/build/*
-.gradel
+Application/build/
+.gradle
