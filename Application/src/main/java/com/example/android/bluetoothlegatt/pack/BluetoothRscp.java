@@ -63,6 +63,7 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     private int mRSCFeature;
     private int mRSCSensorLocation;
+    private static String mCurrentSensorLocation;
     private static final String[] sLocations = {"other", "Top of shoe", "In shoe", "Hip", "Front Wheel", "Left Crank",
             "Right Crank", "Left Pedal", "Right Pedal", "Front Hub", "Rear Dropout", "Chainstay",
             "Rear Wheel", "Rear Hub", "Chest"};
@@ -93,6 +94,15 @@ public final class BluetoothRscp implements BluetoothProfile {
             return sLocations[mRSCSensorLocation];
         }
         return null;
+    }
+
+    public String getCurrentSensorLocation () {
+        return mCurrentSensorLocation;
+    }
+
+    private void setSensorLocation(int location) {
+        mCurrentSensorLocation = sLocations[location];
+        mBluetoothRscpCallback.onSensorLocationGet();
     }
 
     /**
@@ -145,8 +155,9 @@ public final class BluetoothRscp implements BluetoothProfile {
                 UUID uuid = characteristic.getUuid();
                 if (uuid.equals(RSC_SENSOR_LOCATION_CHARAC)) {
                     mRSCSensorLocation = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                    setSensorLocation(mRSCSensorLocation);
                     if (mBluetoothRscpCallback != null) {
-                        mBluetoothRscpCallback.onSensorLocationChange();
+                        mBluetoothRscpCallback.onSensorLocationGet();
                     }
                 } else if (uuid.equals(RSC_FEATURE_CHARAC)) {
                     mRSCFeature = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
@@ -221,7 +232,7 @@ public final class BluetoothRscp implements BluetoothProfile {
                 for (byte i : responseParameter) {
                     aa.append("("+i+") ");
                 }
-                Log.i("mylog","response" + aa.toString());
+
 
             }
         }

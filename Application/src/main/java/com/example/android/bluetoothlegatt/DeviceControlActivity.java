@@ -221,6 +221,7 @@ public class DeviceControlActivity extends Activity {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+
     }
 
     @Override

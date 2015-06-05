@@ -9,8 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -207,6 +210,10 @@ public class RSCPActivity extends Activity {
             public void onClick(View v) {
                 mRscpService.setCumulativeValue(Integer.parseInt(mCumulativeValue.getText().toString()));
                 mControlPointprogressBar.setVisibility(View.VISIBLE);
+
+                SpannableStringBuilder spanStr = (SpannableStringBuilder) mCumulativeValue.getText();
+                Log.d("mylog", "getspanstart = " + spanStr.getSpanStart(new StyleSpan(Typeface.BOLD)));
+                Log.d("mylog", "getspanend = " + spanStr.getSpanEnd(new StyleSpan(Typeface.BOLD)));
             }
         });
 

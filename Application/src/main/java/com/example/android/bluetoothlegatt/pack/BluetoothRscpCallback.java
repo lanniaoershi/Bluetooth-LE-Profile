@@ -15,6 +15,7 @@ public abstract class BluetoothRscpCallback {
                                    boolean isWalkingOrRunningStatusSupported,
                                    boolean isCalibrationProcedureSupported,
                                    boolean isMultipleSensorLocationSupported) {}
+    public void onSensorLocationGet() {}
     public void onSensorLocationChange() {}
     public void onCumulativeValueSet() {}
     public void onUpdateSensorLocation() {}
