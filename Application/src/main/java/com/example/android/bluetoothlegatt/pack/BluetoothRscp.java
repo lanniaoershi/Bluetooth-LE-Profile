@@ -32,6 +32,11 @@ public final class BluetoothRscp implements BluetoothProfile {
     public static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     private static final int RSC_SENSOR_CONTROL_POINT_OP_CODE = 0x10;
+    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_SUCCESS = 0x01;
+    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_OP_CODE_NOT_SUPPORTED = 0x02;
+    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_INVALIID_PARAMATER = 0x03;
+    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_OPERATION_FAILED = 0x04;
+
     private static final int INSTANTANEOUS_STRIDE_LENGTH_PRESENT_BITMASK = 0x01;
     private static final int TOTAL_DISTANCE_PRESENT_BITMASK = 0x01 << 1;
     private static final int WALKING_OR_RUNNING_STATUS_BITMASK = 0x01 << 2;
@@ -82,18 +87,14 @@ public final class BluetoothRscp implements BluetoothProfile {
      *
      * @return location of sensor
      */
-    public String getSensorLocation() {
+    public void getSensorLocation() {
         if(VDBG) Log.d(TAG,"getSensorLocation()");
         BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
         if (rscService == null) {
-            return null;
+            return;
         }
         BluetoothGattCharacteristic characteristic = rscService.getCharacteristic(RSC_SENSOR_LOCATION_CHARAC);
         readCharacteristic(characteristic);
-        if (mRSCSensorLocation < sLocations.length) {
-            return sLocations[mRSCSensorLocation];
-        }
-        return null;
     }
 
     public String getCurrentSensorLocation () {
@@ -102,7 +103,6 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     private void setSensorLocation(int location) {
         mCurrentSensorLocation = sLocations[location];
-        mBluetoothRscpCallback.onSensorLocationGet();
     }
 
     /**
@@ -192,12 +192,14 @@ public final class BluetoothRscp implements BluetoothProfile {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             UUID uuid = characteristic.getUuid();
             if (uuid.equals(RSC_CONTROL_POINT_CHARAC)) {
-                setCharacteristicNotification(true);
+                setCharacteristicNotification(true);//temp solution
+
                 int responseCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0);
-                Log.i("mylog", "responsCode = "+responseCode);
+                Log.d(TAG,"OpCode = " + responseCode);
                 switch (responseCode) {
+
                     case OP_CODE_SET_CUMULATIVE_VALUE:
-                        mBluetoothRscpCallback.onCumulativeValueSet();
+
                         break;
 
                     case OP_CODE_START_CALIBRATION:
@@ -205,7 +207,7 @@ public final class BluetoothRscp implements BluetoothProfile {
                         break;
 
                     case OP_CODE_UPDATE_SENSOR_LOCATION:
-                        mBluetoothRscpCallback.onUpdateSensorLocation();
+
                         break;
 
                     case OP_CODE_GET_SUPPORTED_SENSOR_LOCATION:
@@ -218,27 +220,51 @@ public final class BluetoothRscp implements BluetoothProfile {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+
             if (characteristic.getUuid().equals(RSC_MEASUREMENT_CHARAC)) {
                 parseRSCMeasurementCharac(characteristic);
             } else if (characteristic.getUuid().equals(RSC_CONTROL_POINT_CHARAC)) {
 
-                int requestOpCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0);
+
+                //int responseOpCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0);
                 int responseValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,1);
+
+                switch (responseValue) {
+                    case OP_CODE_SET_CUMULATIVE_VALUE:
+                        mBluetoothRscpCallback.onCumulativeValueSet();
+                        if (VDBG) Log.d(TAG, "onCumulativeValueSet()");
+                        break;
+
+                    case OP_CODE_START_CALIBRATION:
+
+                        break;
+
+                    case OP_CODE_UPDATE_SENSOR_LOCATION:
+                        mBluetoothRscpCallback.onUpdateSensorLocation();
+                        if (VDBG) Log.d(TAG, "onUpdateSensorLocation()");
+                        break;
+
+                    case OP_CODE_GET_SUPPORTED_SENSOR_LOCATION:
+                        mBluetoothRscpCallback.onRequestSupportedSensorLocation();
+                        if (VDBG) Log.d(TAG, "onRequestSupportedSensorLocation()");
+                        break;
+                }
+
                 byte[] responseParameter = characteristic.getValue();
-//                if (requestOpCode == RSC_SENSOR_CONTROL_POINT_OP_CODE) {
-//                    mBluetoothRscpCallback.onCumulativeValueSet();
-//                }
                 StringBuilder aa = new StringBuilder();
                 for (byte i : responseParameter) {
                     aa.append("("+i+") ");
                 }
-
-
+                Log.d(TAG,"responseParameter = "+aa);
             }
         }
 
-
+        /**
+         *
+         * @param characteristic RSC Measurement Characteristic
+         */
         private void parseRSCMeasurementCharac(BluetoothGattCharacteristic characteristic) {
+
             int offset = 0;
             int flags = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, offset);
             int instantaneousSpeed;
@@ -292,7 +318,7 @@ public final class BluetoothRscp implements BluetoothProfile {
             UUID uuid = descriptor.getUuid();
             if (uuid.equals(CLIENT_CHARACTERISTIC_CONFIG)) {
                 // todo
-                //setCharacteristicNotification(true);
+
             }
         }
 
@@ -415,6 +441,8 @@ public final class BluetoothRscp implements BluetoothProfile {
     }
 
     public boolean setCumulativeValue(int cumulativeValue) {
+
+
         if(VDBG) Log.d(TAG, "setCumulativeValue()");
         if (mBluetoothGatt == null) {
             return false;
@@ -431,6 +459,7 @@ public final class BluetoothRscp implements BluetoothProfile {
         byte [] value = {OP_CODE_SET_CUMULATIVE_VALUE,bytes[0],bytes[1],bytes[2],bytes[3]};
         rscControlPointCharac.setValue(value);
         return mBluetoothGatt.writeCharacteristic(rscControlPointCharac);
+
     }
 
     private final static byte[] intToBytes(int value)

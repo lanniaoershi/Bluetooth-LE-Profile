@@ -23,11 +23,12 @@ public class RscpService extends Service {
     public static final String ACTION_RSC_SERVICES_DISCOVERED = "com.example.android.bluetoothlegatt.ACTION_RSC_SERVICES_DISCOVERED";
     public static final String ACTION_RSC_MEASUREMENT_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_MEASUREMENT_DATA_AVAILABLE";
     public static final String ACTION_RSC_FEATURE_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_FEATURE_DATA_AVAILABLE";
-    public static final String ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE";
+    public static final String ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE";
     public static final String ACTION_RSC_CUMULATIVE_VALUE_SET = "com.example.android.bluetoothlegatt.ACTION_RSC_CUMULATIVE_VALUE_SET";
     public static final String ACTION_RSC_START_SENSOR_CALIBRATION = "com.example.android.bluetoothlegatt.ACTION_RSC_START_SENSOR_CALIBRATION";
     public static final String ACTION_RSC_UPDATE_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.ACTION_RSC_UPDATE_SENSOR_LOCATION";
     public static final String ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
+    public static final String ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE";
 
 
     public static final String RSC_SPEED_DATA = "com.example.android.bluetoothlegatt.RSC_SPEED_DATA";
@@ -44,7 +45,8 @@ public class RscpService extends Service {
     public static final String RSC_FEATURE_CALIBRATION_SUPPORTED = "com.example.android.bluetoothlegatt.RSC_FEATURE_CALIBRATION_SUPPORTED";
     public static final String RSC_FEATURE_MULTIPLE_SENSOR_SUPPORTED = "com.example.android.bluetoothlegatt.RSC_FEATURE_MULTIPLE_SENSOR_SUPPORTED";
 
-    public static final String RSC_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SENSOR_LOCATION_DATA";
+    public static final String RSC_CURRENT_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SENSOR_LOCATION_DATA";
+    public static final String RSC_SUPPORTED_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SUPPORTED_SENSOR_LOCATION_DATA";
 
 //    public static final String RSC_SET_CUMULATIVE_VALUE = "com.example.android.bluetoothlegatt.RSC_SET_CUMULATIVE_VALUE";
 //    public static final String RSC_START_SENSOR_CALIBRATION = "com.example.android.bluetoothlegatt.RSC_START_SENSOR_CALIBRATION";
@@ -98,17 +100,17 @@ public class RscpService extends Service {
             sendBroadcast(intent);
         }
 
-        @Override
-        public void onSensorLocationChange() {
-            Intent intent = new Intent(ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE);
-            intent.putExtra(RSC_SENSOR_LOCATION_DATA, mBluetoothRscp.getSensorLocation());
-            sendBroadcast(intent);
-        }
+//        @Override
+//        public void onSensorLocationChange() {
+//            Intent intent = new Intent(ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE);
+//            intent.putExtra(RSC_CURRENT_SENSOR_LOCATION_DATA, mBluetoothRscp.getSensorLocation());
+//            sendBroadcast(intent);
+//        }
 
         @Override
         public void onSensorLocationGet() {
-            Intent intent = new Intent(ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE);
-            intent.putExtra(RSC_SENSOR_LOCATION_DATA, mBluetoothRscp.getCurrentSensorLocation());
+            Intent intent = new Intent(ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE);
+            intent.putExtra(RSC_CURRENT_SENSOR_LOCATION_DATA, mBluetoothRscp.getCurrentSensorLocation());
             sendBroadcast(intent);
         }
 
@@ -131,10 +133,19 @@ public class RscpService extends Service {
         }
 
         @Override
+        public void onSupportedSensorLocationGet() {
+            Intent intent = new Intent(ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
+            intent.putExtra(RSC_SUPPORTED_SENSOR_LOCATION_DATA,"1248");
+            sendBroadcast(intent);
+        }
+
+        @Override
         public void onStartCalibration() {
             Intent intent = new Intent(ACTION_RSC_START_SENSOR_CALIBRATION);
             sendBroadcast(intent);
         }
+
+
     };
 
     public class LocalBinder extends Binder {
@@ -209,8 +220,8 @@ public class RscpService extends Service {
         return mBluetoothRscp.updateSensorLocation(location);
     }
 
-    public String getSensorLocation() {
-        return mBluetoothRscp.getSensorLocation();
+    public void getSensorLocation() {
+        mBluetoothRscp.getSensorLocation();
     }
 
     public void getSupportedFeature() {

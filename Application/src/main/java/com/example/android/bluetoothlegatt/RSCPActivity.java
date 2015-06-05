@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.bluetoothlegatt.pack.BluetoothRscp;
 import com.example.android.bluetoothlegatt.pack.RscpService;
@@ -62,9 +63,10 @@ public class RSCPActivity extends Activity {
 
     private ProgressBar mFeatureProgressBar;
     private ProgressBar mLocationProgressBar;
-    private ProgressBar mControlPointprogressBar;
+    private ProgressBar mControlPointProgressBar;
 
     private boolean mNotifyFlag = true;
+    private static boolean mRequestSupportedSensorLocationDone = false;
 
 
 
@@ -116,23 +118,24 @@ public class RSCPActivity extends Activity {
                 mCS.setText(String.valueOf(intent.getBooleanExtra(RscpService.RSC_FEATURE_CALIBRATION_SUPPORTED, false)));
                 mMSLS.setText(String.valueOf(intent.getBooleanExtra(RscpService.RSC_FEATURE_MULTIPLE_SENSOR_SUPPORTED, false)));
                 mFeatureProgressBar.setVisibility(View.INVISIBLE);
-            } else if (RscpService.ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE.equals(action)) {
-                mSensorLocation.setText(intent.getStringExtra(RscpService.RSC_SENSOR_LOCATION_DATA));
+            } else if (RscpService.ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE.equals(action)) {
+                mSensorLocation.setText(intent.getStringExtra(RscpService.RSC_CURRENT_SENSOR_LOCATION_DATA));
                 mLocationProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_CUMULATIVE_VALUE_SET.equals(action)) {
                 mControlPointOpState.setText("set cumulative value success");
-                mControlPointprogressBar.setVisibility(View.INVISIBLE);
+                mControlPointProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_START_SENSOR_CALIBRATION.equals(action)) {
 
-                mControlPointprogressBar.setVisibility(View.INVISIBLE);
+                mControlPointProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION.equals(action)) {
                 mControlPointOpState.setText("update sensor location success");
-                mControlPointprogressBar.setVisibility(View.INVISIBLE);
+                mControlPointProgressBar.setVisibility(View.INVISIBLE);
             } else if (RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION.equals(action)) {
-                mControlPointprogressBar.setVisibility(View.INVISIBLE);
+                mRequestSupportedSensorLocationDone = true;
+                mControlPointProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
@@ -143,6 +146,8 @@ public class RSCPActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rscp);
+        Intent rscpServiceIntent = new Intent(RSCPActivity.this, RscpService.class);
+        bindService(rscpServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         Intent intent = getIntent();
 
         mDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
@@ -175,16 +180,16 @@ public class RSCPActivity extends Activity {
 
         mFeatureProgressBar = (ProgressBar) findViewById(R.id.progressbar_feature);
         mLocationProgressBar = (ProgressBar) findViewById(R.id.progressbar_location);
-        mControlPointprogressBar = (ProgressBar) findViewById(R.id.progressbar_control_point);
+        mControlPointProgressBar = (ProgressBar) findViewById(R.id.progressbar_control_point);
         mFeatureProgressBar.setIndeterminate(true);
         mLocationProgressBar.setIndeterminate(true);
-        mControlPointprogressBar.setIndeterminate(true);
+        mControlPointProgressBar.setIndeterminate(true);
 
         mSpinner = (Spinner) findViewById(R.id.spinner_sensor_location);
 
         mFeatureProgressBar.setVisibility(View.INVISIBLE);
         mLocationProgressBar.setVisibility(View.INVISIBLE);
-        mControlPointprogressBar.setVisibility(View.INVISIBLE);
+        mControlPointProgressBar.setVisibility(View.INVISIBLE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location,android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
@@ -192,10 +197,14 @@ public class RSCPActivity extends Activity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (mRscpService != null) {
-                    mRscpService.updateSensorLocation(position);
-                    mControlPointprogressBar.setVisibility(View.VISIBLE);
-                }
+
+                if (mRequestSupportedSensorLocationDone == true) {
+                    if (mRscpService != null) {
+                        mRscpService.updateSensorLocation(position);
+                        mControlPointProgressBar.setVisibility(View.VISIBLE);
+                    }
+                } else
+                    Toast.makeText(getApplication(),"Please request supported sensor location first", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -209,11 +218,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mRscpService.setCumulativeValue(Integer.parseInt(mCumulativeValue.getText().toString()));
-                mControlPointprogressBar.setVisibility(View.VISIBLE);
-
-                SpannableStringBuilder spanStr = (SpannableStringBuilder) mCumulativeValue.getText();
-                Log.d("mylog", "getspanstart = " + spanStr.getSpanStart(new StyleSpan(Typeface.BOLD)));
-                Log.d("mylog", "getspanend = " + spanStr.getSpanEnd(new StyleSpan(Typeface.BOLD)));
+                mControlPointProgressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -261,8 +266,7 @@ public class RSCPActivity extends Activity {
             }
         });
 
-        Intent rscpServiceIntent = new Intent(RSCPActivity.this, RscpService.class);
-        bindService(rscpServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
 
     }
 
@@ -308,12 +312,7 @@ public class RSCPActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_get_location) {
-            if (mConnected == true) {
-                mSensorLocation.setText(mRscpService.getSensorLocation());
-                return true;
-            }
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -324,11 +323,12 @@ public class RSCPActivity extends Activity {
         intentFilter.addAction(RscpService.ACTION_RSC_DISCONNECTED);
         intentFilter.addAction(RscpService.ACTION_RSC_MEASUREMENT_DATA_AVAILABLE);
         intentFilter.addAction(RscpService.ACTION_RSC_FEATURE_DATA_AVAILABLE);
-        intentFilter.addAction(RscpService.ACTION_RSC_SENSOR_LOCATION_DATA_AVAILABLE);
+        intentFilter.addAction(RscpService.ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE);
         intentFilter.addAction(RscpService.ACTION_RSC_CUMULATIVE_VALUE_SET);
         intentFilter.addAction(RscpService.ACTION_RSC_START_SENSOR_CALIBRATION);
         intentFilter.addAction(RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION);
         intentFilter.addAction(RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
+        intentFilter.addAction(RscpService.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE);
 
         return intentFilter;
     }
