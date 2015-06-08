@@ -31,11 +31,8 @@ public final class BluetoothRscp implements BluetoothProfile {
     public static final UUID RSC_CONTROL_POINT_CHARAC = UUID.fromString("00002a55-0000-1000-8000-00805f9b34fb");
     public static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-    private static final int RSC_SENSOR_CONTROL_POINT_OP_CODE = 0x10;
-    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_SUCCESS = 0x01;
-    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_OP_CODE_NOT_SUPPORTED = 0x02;
-    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_INVALIID_PARAMATER = 0x03;
-    private static final int RSC_SENSOR_CONTROL_POINT_RESPONSE_VALUE_OPERATION_FAILED = 0x04;
+
+
 
     private static final int INSTANTANEOUS_STRIDE_LENGTH_PRESENT_BITMASK = 0x01;
     private static final int TOTAL_DISTANCE_PRESENT_BITMASK = 0x01 << 1;
@@ -46,6 +43,7 @@ public final class BluetoothRscp implements BluetoothProfile {
     private static final int CALIBRATION_PROCEDURE_SUPPORTED = 0x0001 << 3;
     private static final int MULTIPLE_SENSOR_LOCATIONS_SUPPORTED = 0x0001 << 4;
 
+    private static final int RSC_SENSOR_CONTROL_POINT_OP_CODE = 0x10;
     private static final int OP_CODE_SET_CUMULATIVE_VALUE = 0x01;
     private static final int OP_CODE_START_CALIBRATION = 0x02;
     private static final int OP_CODE_UPDATE_SENSOR_LOCATION = 0x03;
@@ -84,8 +82,8 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     /**
      * Get the location of sensor.
+     * Return at callback onSensorLocationGet()
      *
-     * @return location of sensor
      */
     public void getSensorLocation() {
         if(VDBG) Log.d(TAG,"getSensorLocation()");
@@ -97,13 +95,6 @@ public final class BluetoothRscp implements BluetoothProfile {
         readCharacteristic(characteristic);
     }
 
-    public String getCurrentSensorLocation () {
-        return mCurrentSensorLocation;
-    }
-
-    private void setSensorLocation(int location) {
-        mCurrentSensorLocation = sLocations[location];
-    }
 
     /**
      * Get the feature supported by the sensor.
@@ -155,9 +146,8 @@ public final class BluetoothRscp implements BluetoothProfile {
                 UUID uuid = characteristic.getUuid();
                 if (uuid.equals(RSC_SENSOR_LOCATION_CHARAC)) {
                     mRSCSensorLocation = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-                    setSensorLocation(mRSCSensorLocation);
                     if (mBluetoothRscpCallback != null) {
-                        mBluetoothRscpCallback.onSensorLocationGet();
+                        mBluetoothRscpCallback.onSensorLocationGet(sLocations[mRSCSensorLocation]);
                     }
                 } else if (uuid.equals(RSC_FEATURE_CHARAC)) {
                     mRSCFeature = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
@@ -236,7 +226,8 @@ public final class BluetoothRscp implements BluetoothProfile {
                         break;
 
                     case OP_CODE_START_CALIBRATION:
-
+                        mBluetoothRscpCallback.onStartCalibration();
+                        if (VDBG) Log.d(TAG, "onStartCalibration()");
                         break;
 
                     case OP_CODE_UPDATE_SENSOR_LOCATION:

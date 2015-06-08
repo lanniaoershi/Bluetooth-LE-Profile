@@ -43,7 +43,6 @@ public class RSCPActivity extends Activity {
     private TextView mCS;
     private TextView mMSLS;
     private TextView mSensorLocation;
-    private TextView mControlPointOpState;
     private Button mBtnReadFeature;
     private Button mBtnReadSensorLocation;
     private Button mEnableNotify;
@@ -116,15 +115,14 @@ public class RSCPActivity extends Activity {
                 mStateProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_CUMULATIVE_VALUE_SET.equals(action)) {
-                mControlPointOpState.setText("set cumulative value success");
+
                 mStateProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_START_SENSOR_CALIBRATION.equals(action)) {
-
                 mStateProgressBar.setVisibility(View.INVISIBLE);
 
             } else if (RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION.equals(action)) {
-                mControlPointOpState.setText("update sensor location success");
+
                 mStateProgressBar.setVisibility(View.INVISIBLE);
             } else if (RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION.equals(action)) {
                 mRequestSupportedSensorLocationDone = true;
@@ -159,7 +157,7 @@ public class RSCPActivity extends Activity {
         mMSLS = (TextView) findViewById(R.id.multi_sensor_supported);
 
         mSensorLocation = (TextView) findViewById(R.id.sensor_location);
-        mControlPointOpState = (TextView) findViewById(R.id.control_point_op_state);
+
 
         mEnableNotify = (Button) findViewById(R.id.enable_notify);
 
@@ -231,6 +229,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mRscpService.getSupportedSensorLocation();
+                mStateProgressBar.setVisibility(View.VISIBLE);
             }
         });
         mEnableNotify.setVisibility(View.INVISIBLE);
@@ -252,6 +251,7 @@ public class RSCPActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mRscpService.startCalibration();
+                mStateProgressBar.setVisibility(View.VISIBLE);
             }
         });
 

@@ -108,9 +108,9 @@ public class RscpService extends Service {
 //        }
 
         @Override
-        public void onSensorLocationGet() {
+        public void onSensorLocationGet(String location) {
             Intent intent = new Intent(ACTION_RSC_CURRENT_SENSOR_LOCATION_DATA_AVAILABLE);
-            intent.putExtra(RSC_CURRENT_SENSOR_LOCATION_DATA, mBluetoothRscp.getCurrentSensorLocation());
+            intent.putExtra(RSC_CURRENT_SENSOR_LOCATION_DATA, location);
             sendBroadcast(intent);
         }
 
