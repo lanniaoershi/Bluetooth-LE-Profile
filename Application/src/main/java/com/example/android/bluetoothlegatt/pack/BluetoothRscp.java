@@ -31,9 +31,6 @@ public final class BluetoothRscp implements BluetoothProfile {
     public static final UUID RSC_CONTROL_POINT_CHARAC = UUID.fromString("00002a55-0000-1000-8000-00805f9b34fb");
     public static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-
-
-
     private static final int INSTANTANEOUS_STRIDE_LENGTH_PRESENT_BITMASK = 0x01;
     private static final int TOTAL_DISTANCE_PRESENT_BITMASK = 0x01 << 1;
     private static final int WALKING_OR_RUNNING_STATUS_BITMASK = 0x01 << 2;
@@ -50,13 +47,13 @@ public final class BluetoothRscp implements BluetoothProfile {
     private static final int OP_CODE_GET_SUPPORTED_SENSOR_LOCATION = 0x04;
 
     private static final int STATE_DISCONNECTED = 0;
-    private static final int STATE_CONNECTING = 1;
+    private static final int STATE_DISCONNECTING = 3;
     private static final int STATE_CONNECTED = 2;
+    private static final int STATE_CONNECTING = 1;
 
     private static final String WALKING = "Walking";
     private static final String RUNNING = "Running";
     private static final String STANDING_STILL = "Standing still";
-
 
     private Context mContext;
     private BluetoothDevice mBluetoothDevice;
@@ -121,6 +118,10 @@ public final class BluetoothRscp implements BluetoothProfile {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 mConnectionState = STATE_DISCONNECTED;
                 Log.i(TAG, "Disconnected from GATT server.");
+            } else if (newState == BluetoothProfile.STATE_CONNECTING) {
+                mConnectionState = STATE_CONNECTING;
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
+                mConnectionState = STATE_DISCONNECTING;
             }
             if (mBluetoothRscpCallback != null) {
                 mBluetoothRscpCallback.onConnectionStateChange(status, newState);
@@ -130,8 +131,12 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                setCharacteristicIndication(true);
+//                if (mBluetoothRscpCallback != null) {
+//                    mBluetoothRscpCallback.onServicesDiscovered(status);
+//                }
                 setCharacteristicNotification(true);
+                setCharacteristicIndication(true);
+//                setCharacteristicNotification(true);
 
 
                 // sth wrong here
@@ -211,6 +216,7 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 
+            Log.i("mylog", "characteristic = " + characteristic.getUuid());
             if (characteristic.getUuid().equals(RSC_MEASUREMENT_CHARAC)) {
                 parseRSCMeasurementCharac(characteristic);
             } else if (characteristic.getUuid().equals(RSC_CONTROL_POINT_CHARAC)) {

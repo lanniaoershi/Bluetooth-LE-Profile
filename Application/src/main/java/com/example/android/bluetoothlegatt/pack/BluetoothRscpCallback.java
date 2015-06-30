@@ -6,6 +6,7 @@ package com.example.android.bluetoothlegatt.pack;
 public abstract class BluetoothRscpCallback {
 
     public void onConnectionStateChange(int state, int newState) {}
+    public void onServicesDiscovered(int state) {}
     public void onRSCMeasurementCharacChange(int speed, int cadence, int strideLength, int totalDistance,
                               boolean isInstantaneousStrideLengthPresent,
                               boolean isTotalDistancePresent,

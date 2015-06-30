@@ -20,6 +20,8 @@ public class RscpService extends Service {
 
     public static final String ACTION_RSC_CONNECTED = "com.example.android.bluetoothlegatt.ACTION_RSC_CONNECTED";
     public static final String ACTION_RSC_DISCONNECTED = "com.example.android.bluetoothlegatt.ACTION_RSC_DISCONNECTED";
+    public static final String ACTION_RSC_CONNECTING = "com.example.android.bluetoothlegatt.ACTION_RSC_CONNECTING";
+    public static final String ACTION_RSC_DISCONNECTING = "com.example.android.bluetoothlegatt.ACTION_RSC_DISCONNECTING";
     public static final String ACTION_RSC_SERVICES_DISCOVERED = "com.example.android.bluetoothlegatt.ACTION_RSC_SERVICES_DISCOVERED";
     public static final String ACTION_RSC_MEASUREMENT_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_MEASUREMENT_DATA_AVAILABLE";
     public static final String ACTION_RSC_FEATURE_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_FEATURE_DATA_AVAILABLE";
@@ -65,6 +67,10 @@ public class RscpService extends Service {
                 sendBroadcast(new Intent(ACTION_RSC_CONNECTED));
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 sendBroadcast(new Intent(ACTION_RSC_DISCONNECTED));
+            } else if (newState == BluetoothProfile.STATE_CONNECTING) {
+                sendBroadcast(new Intent(ACTION_RSC_CONNECTING));
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
+                sendBroadcast(new Intent(ACTION_RSC_DISCONNECTING));
             }
         }
 

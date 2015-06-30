@@ -345,8 +345,9 @@
                             <EditText
                                 android:id="@+id/cumulative_value"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="Cumulative value: "
+
                                 android:inputType="number"
                                 android:textSize="12sp" />
 
@@ -400,6 +401,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:theme="@android:style/Widget.DeviceDefault.ProgressBar.Large"/>
+            <TextView
+                android:id="@+id/action_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_gravity="bottom|center"/>
         </FrameLayout>
     </FrameLayout>
 </LinearLayout>
