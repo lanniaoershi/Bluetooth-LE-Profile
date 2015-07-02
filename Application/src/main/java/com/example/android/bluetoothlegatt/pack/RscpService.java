@@ -151,7 +151,11 @@ public class RscpService extends Service {
             sendBroadcast(intent);
         }
 
-
+        @Override
+        public void onServicesDiscovered(int state) {
+            Intent intent = new Intent(ACTION_RSC_SERVICES_DISCOVERED);
+            sendBroadcast(intent);
+        }
     };
 
     public class LocalBinder extends Binder {
@@ -211,6 +215,12 @@ public class RscpService extends Service {
     public void setCharacteristicNotification(boolean enable) {
         if (mBluetoothAdapter != null && mBluetoothRscp != null) {
             mBluetoothRscp.setCharacteristicNotification(enable);
+        }
+    }
+
+    public void setCharacteristicIndication(boolean enable) {
+        if (mBluetoothAdapter != null && mBluetoothRscp != null) {
+            mBluetoothRscp.setCharacteristicIndication(enable);
         }
     }
 

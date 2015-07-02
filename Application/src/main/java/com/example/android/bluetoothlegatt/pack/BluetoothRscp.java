@@ -131,11 +131,11 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-//                if (mBluetoothRscpCallback != null) {
-//                    mBluetoothRscpCallback.onServicesDiscovered(status);
-//                }
-                setCharacteristicNotification(true);
-                setCharacteristicIndication(true);
+                if (mBluetoothRscpCallback != null) {
+                    mBluetoothRscpCallback.onServicesDiscovered(status);
+                }
+//                setCharacteristicNotification(true);
+//                setCharacteristicIndication(true);
 //                setCharacteristicNotification(true);
 
 
@@ -216,7 +216,7 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 
-            Log.i("mylog", "characteristic = " + characteristic.getUuid());
+            Log.i("mylog", "@@@@@@@characteristic = " + characteristic.getUuid());
             if (characteristic.getUuid().equals(RSC_MEASUREMENT_CHARAC)) {
                 parseRSCMeasurementCharac(characteristic);
             } else if (characteristic.getUuid().equals(RSC_CONTROL_POINT_CHARAC)) {

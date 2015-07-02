@@ -16,9 +16,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +51,7 @@ public class RSCPActivity extends Activity {
     private TextView mSensorLocation;
     private Button mBtnReadFeature;
     private Button mBtnReadSensorLocation;
-    private Button mEnableNotify;
+
 
     private EditText mCumulativeValue;
     private Button mSetCumulativeValueBtn;
@@ -60,6 +62,9 @@ public class RSCPActivity extends Activity {
 
     private ProgressBar mStateProgressBar;
     private TextView mStateTextView;
+
+    private Switch mSwitchNotification;
+    private Switch mSwitchIndication;
 
     private boolean mNotifyFlag = true;
     private static boolean mRequestSupportedSensorLocationDone = false;
@@ -135,6 +140,9 @@ public class RSCPActivity extends Activity {
                 mStateProgressBar.setVisibility(View.INVISIBLE);
                 mStateTextView.setText(SUCCESS);
 
+            } else if (RscpService.ACTION_RSC_SERVICES_DISCOVERED.equals(action)) {
+//                mSwitchIndication.setChecked(true);
+                mSwitchNotification.setChecked(true);
             }
 
         }
@@ -165,8 +173,6 @@ public class RSCPActivity extends Activity {
 
         mSensorLocation = (TextView) findViewById(R.id.sensor_location);
 
-        mEnableNotify = (Button) findViewById(R.id.enable_notify);
-
         mBtnReadFeature = (Button) findViewById(R.id.btn_read_feature);
         mBtnReadSensorLocation = (Button) findViewById(R.id.btn_read_sensor_location);
 
@@ -182,6 +188,27 @@ public class RSCPActivity extends Activity {
         mStateProgressBar.setVisibility(View.INVISIBLE);
 
         mSpinner = (Spinner) findViewById(R.id.spinner_sensor_location);
+
+        mSwitchNotification = (Switch) findViewById(R.id.switch_notification);
+        mSwitchIndication = (Switch) findViewById(R.id.switch_indication);
+
+        mSwitchNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mRscpService != null) {
+                    mRscpService.setCharacteristicNotification(isChecked);
+                }
+            }
+        });
+
+        mSwitchIndication.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mRscpService != null) {
+                    mRscpService.setCharacteristicIndication(isChecked);
+                }
+            }
+        });
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
@@ -209,7 +236,15 @@ public class RSCPActivity extends Activity {
         mSetCumulativeValueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRscpService.setCumulativeValue(Integer.parseInt(mCumulativeValue.getText().toString()));
+                int value;
+                try {
+                    value = Integer.parseInt(mCumulativeValue.getText().toString());
+                } catch (NumberFormatException e) {
+                    value = 0;
+                    e.printStackTrace();
+                }
+
+                mRscpService.setCumulativeValue(value);
                 mStateProgressBar.setVisibility(View.VISIBLE);
                 mStateTextView.setText(EXEC);
             }
@@ -241,20 +276,7 @@ public class RSCPActivity extends Activity {
                 mStateTextView.setText(EXEC);
             }
         });
-        mEnableNotify.setVisibility(View.INVISIBLE);
-        mEnableNotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mNotifyFlag == false) {
-                    mRscpService.setCharacteristicNotification(mNotifyFlag);
-                    clearUI();
-                    mNotifyFlag = true;
-                } else {
-                    mRscpService.setCharacteristicNotification(mNotifyFlag);
-                    mNotifyFlag = false;
-                }
-            }
-        });
+
 
         mStartSensorCalibrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -325,6 +347,7 @@ public class RSCPActivity extends Activity {
         intentFilter.addAction(RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION);
         intentFilter.addAction(RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
         intentFilter.addAction(RscpService.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE);
+        intentFilter.addAction(RscpService.ACTION_RSC_SERVICES_DISCOVERED);
 
         return intentFilter;
     }

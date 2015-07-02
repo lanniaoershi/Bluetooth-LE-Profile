@@ -58,6 +58,7 @@
             android:name=".RSCPActivity"
             android:label="@string/title_activity_rscp"
             android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar.Fullscreen">
             <intent-filter>
                 <action android:name="com.example.android.bluetoothlegatt.ACTION_RSCP" />
