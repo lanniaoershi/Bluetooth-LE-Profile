@@ -1,11 +1,13 @@
 package com.example.android.bluetoothlegatt.pack;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.util.Log;
@@ -24,6 +26,7 @@ public final class BluetoothRscp implements BluetoothProfile {
     private static final boolean DBG = true;
     private static final boolean VDBG = true;
 
+//    public static final UUID DEVICE_INFORMATION = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
     public static final UUID RSC_SERVICE = UUID.fromString("00001814-0000-1000-8000-00805f9b34fb");
     public static final UUID RSC_MEASUREMENT_CHARAC = UUID.fromString("00002a53-0000-1000-8000-00805f9b34fb");
     public static final UUID RSC_FEATURE_CHARAC = UUID.fromString("00002a54-0000-1000-8000-00805f9b34fb");
@@ -47,9 +50,12 @@ public final class BluetoothRscp implements BluetoothProfile {
     private static final int OP_CODE_GET_SUPPORTED_SENSOR_LOCATION = 0x04;
 
     private static final int STATE_DISCONNECTED = 0;
-    private static final int STATE_DISCONNECTING = 3;
-    private static final int STATE_CONNECTED = 2;
     private static final int STATE_CONNECTING = 1;
+    private static final int STATE_CONNECTED = 2;
+    private static final int STATE_DISCONNECTING = 3;
+
+    private static final int RESPONSE_OP_CODE_OFFSET = 0;
+    private static final int RESPONSE_VALUE_OFFSET = 1;
 
     private static final String WALKING = "Walking";
     private static final String RUNNING = "Running";
@@ -61,8 +67,10 @@ public final class BluetoothRscp implements BluetoothProfile {
     private BluetoothRscpCallback mBluetoothRscpCallback;
     private int mConnectionState = STATE_DISCONNECTED;
 
-    private int mRSCFeature;
-    private int mRSCSensorLocation;
+    private BluetoothGattService mRSCService;
+
+    private List<BluetoothDevice> mConnectedDevicesList;
+
     private static String mCurrentSensorLocation;
     private static final String[] sLocations = {"other", "Top of shoe", "In shoe", "Hip", "Front Wheel", "Left Crank",
             "Right Crank", "Left Pedal", "Right Pedal", "Front Hub", "Rear Dropout", "Chainstay",
@@ -78,68 +86,74 @@ public final class BluetoothRscp implements BluetoothProfile {
     }
 
     /**
-     * Get the location of sensor.
+     * Get location of sensor.
      * Return at callback onSensorLocationGet()
      *
      */
-    public void getSensorLocation() {
+    public boolean getSensorLocation() {
         if(VDBG) Log.d(TAG,"getSensorLocation()");
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
-            return;
+        if (mRSCService == null) {
+            return false;
         }
-        BluetoothGattCharacteristic characteristic = rscService.getCharacteristic(RSC_SENSOR_LOCATION_CHARAC);
-        readCharacteristic(characteristic);
+        return readCharacteristic(mRSCService.getCharacteristic(RSC_SENSOR_LOCATION_CHARAC));
     }
 
 
     /**
-     * Get the feature supported by the sensor.
-     * Return by callback.
+     * Get feature supported by sensor.
+     *
      */
-    public void getSupportedFeature() {
+    public boolean getSupportedFeature() {
+
         if(VDBG) Log.d(TAG,"getSupportedFeature()");
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
-            return;
+        if (mRSCService == null) {
+            return false;
         }
-        BluetoothGattCharacteristic characteristic = rscService.getCharacteristic(RSC_FEATURE_CHARAC);
-        readCharacteristic(characteristic);
+        return readCharacteristic(mRSCService.getCharacteristic(RSC_FEATURE_CHARAC));
     }
 
     private BluetoothGattCallback mGattCallBack = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
+            if (mBluetoothRscpCallback != null) {
+
+                mBluetoothRscpCallback.onConnectionStateChange(status, newState);
+            }
+
             if (newState == BluetoothProfile.STATE_CONNECTED) {
+
                 mConnectionState = STATE_CONNECTED;
                 Log.i(TAG, "Connected to GATT server.");
                 Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
+
+                mConnectedDevicesList = gatt.getConnectedDevices();
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+
                 mConnectionState = STATE_DISCONNECTED;
                 Log.i(TAG, "Disconnected from GATT server.");
+
             } else if (newState == BluetoothProfile.STATE_CONNECTING) {
+
                 mConnectionState = STATE_CONNECTING;
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
+
                 mConnectionState = STATE_DISCONNECTING;
+
             }
-            if (mBluetoothRscpCallback != null) {
-                mBluetoothRscpCallback.onConnectionStateChange(status, newState);
-            }
+
+
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (mBluetoothRscpCallback != null) {
+                    mRSCService = mBluetoothGatt.getService(RSC_SERVICE);
                     mBluetoothRscpCallback.onServicesDiscovered(status);
                 }
-//                setCharacteristicNotification(true);
-//                setCharacteristicIndication(true);
-//                setCharacteristicNotification(true);
-
-
-                // sth wrong here
                 return;
             }
             disconnect();
@@ -147,41 +161,24 @@ public final class BluetoothRscp implements BluetoothProfile {
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 UUID uuid = characteristic.getUuid();
                 if (uuid.equals(RSC_SENSOR_LOCATION_CHARAC)) {
-                    mRSCSensorLocation = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                    int mRSCSensorLocation = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                     if (mBluetoothRscpCallback != null) {
                         mBluetoothRscpCallback.onSensorLocationGet(sLocations[mRSCSensorLocation]);
                     }
+
                 } else if (uuid.equals(RSC_FEATURE_CHARAC)) {
-                    mRSCFeature = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
+                    int mRSCFeature = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
                     parseRSCFeatureCharac(mRSCFeature);
                 }
 
             }
         }
 
-        private void parseRSCFeatureCharac(int feature) {
 
-            boolean instantaneousStrideLengthMeasurementSupported;
-            boolean totalDistanceMeasurementSupported;
-            boolean walkingOrRunningStatusSupported;
-            boolean calibrationProcedureSupported;
-            boolean multipleSensorLocationSupported;
-
-            instantaneousStrideLengthMeasurementSupported = ((feature & INSTANTANEOUS_STRIDE_LENGTH_MEASUREMENT_SUPPORTED_BITMASK) != 0);
-            totalDistanceMeasurementSupported = ((feature & TOTAL_DISTANCE_MEASUREMENT_SUPPORTED_BITMASK) != 0);
-            walkingOrRunningStatusSupported = ((feature & WALKING_OR_RUNNING_STATUS_SUPPORTED_BITMASK) != 0);
-            calibrationProcedureSupported = ((feature & CALIBRATION_PROCEDURE_SUPPORTED) != 0);
-            multipleSensorLocationSupported = ((feature & MULTIPLE_SENSOR_LOCATIONS_SUPPORTED) != 0);
-
-            if (mBluetoothRscpCallback != null) {
-                mBluetoothRscpCallback.onRSCFeatureChange(instantaneousStrideLengthMeasurementSupported,
-                        totalDistanceMeasurementSupported, walkingOrRunningStatusSupported,
-                        calibrationProcedureSupported, multipleSensorLocationSupported);
-            }
-        }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
@@ -216,14 +213,14 @@ public final class BluetoothRscp implements BluetoothProfile {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 
-            Log.i("mylog", "@@@@@@@characteristic = " + characteristic.getUuid());
             if (characteristic.getUuid().equals(RSC_MEASUREMENT_CHARAC)) {
+
                 parseRSCMeasurementCharac(characteristic);
+
             } else if (characteristic.getUuid().equals(RSC_CONTROL_POINT_CHARAC)) {
 
-
-                //int responseOpCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0);
-                int responseValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,1);
+                int responseOpCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,RESPONSE_OP_CODE_OFFSET);
+                int responseValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, RESPONSE_VALUE_OFFSET);
 
                 switch (responseValue) {
                     case OP_CODE_SET_CUMULATIVE_VALUE:
@@ -258,7 +255,9 @@ public final class BluetoothRscp implements BluetoothProfile {
 
         /**
          *
+         * Parsing value RSC Measurement Characteristic by Bluetooth SIG RSCP specification.
          * @param characteristic RSC Measurement Characteristic
+         *
          */
         private void parseRSCMeasurementCharac(BluetoothGattCharacteristic characteristic) {
 
@@ -298,11 +297,33 @@ public final class BluetoothRscp implements BluetoothProfile {
             if (instantaneousSpeed == 0 && instantaneousCadence == 0) {
                 motion = STANDING_STILL;
             }
+
             if (mBluetoothRscpCallback != null) {
                 mBluetoothRscpCallback.onRSCMeasurementCharacChange(instantaneousSpeed, instantaneousCadence, instantaneousStrideLength,
                         totalDistance, isInstantaneousStrideLengthPresent, isTotalDistancePresent, motion);
             }
 
+        }
+
+        private void parseRSCFeatureCharac(int feature) {
+
+            boolean instantaneousStrideLengthMeasurementSupported;
+            boolean totalDistanceMeasurementSupported;
+            boolean walkingOrRunningStatusSupported;
+            boolean calibrationProcedureSupported;
+            boolean multipleSensorLocationSupported;
+
+            instantaneousStrideLengthMeasurementSupported = ((feature & INSTANTANEOUS_STRIDE_LENGTH_MEASUREMENT_SUPPORTED_BITMASK) != 0);
+            totalDistanceMeasurementSupported = ((feature & TOTAL_DISTANCE_MEASUREMENT_SUPPORTED_BITMASK) != 0);
+            walkingOrRunningStatusSupported = ((feature & WALKING_OR_RUNNING_STATUS_SUPPORTED_BITMASK) != 0);
+            calibrationProcedureSupported = ((feature & CALIBRATION_PROCEDURE_SUPPORTED) != 0);
+            multipleSensorLocationSupported = ((feature & MULTIPLE_SENSOR_LOCATIONS_SUPPORTED) != 0);
+
+            if (mBluetoothRscpCallback != null) {
+                mBluetoothRscpCallback.onRSCFeatureChange(instantaneousStrideLengthMeasurementSupported,
+                        totalDistanceMeasurementSupported, walkingOrRunningStatusSupported,
+                        calibrationProcedureSupported, multipleSensorLocationSupported);
+            }
         }
 
         @Override
@@ -321,13 +342,16 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     };
 
-    private void readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        if(VDBG) Log.d(TAG, "readCharacteristic()");
+
+
+    private boolean readCharacteristic(BluetoothGattCharacteristic characteristic) {
+
+        if(VDBG) Log.d(TAG, "Read characteristic: " + characteristic.getUuid());
         if (mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
-            return;
+            return false;
         }
-        mBluetoothGatt.readCharacteristic(characteristic);
+        return mBluetoothGatt.readCharacteristic(characteristic);
     }
 
     /**
@@ -379,11 +403,11 @@ public final class BluetoothRscp implements BluetoothProfile {
         if (mBluetoothGatt == null) {
             return;
         }
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
+
+        if (mRSCService == null) {
             return;
         }
-        charac = rscService.getCharacteristic(RSC_MEASUREMENT_CHARAC);
+        charac = mRSCService.getCharacteristic(RSC_MEASUREMENT_CHARAC);
 
         if (!mBluetoothGatt.setCharacteristicNotification(charac, enabled)) {
             return;
@@ -409,11 +433,11 @@ public final class BluetoothRscp implements BluetoothProfile {
         if (mBluetoothGatt == null) {
             return false;
         }
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
+
+        if (mRSCService == null) {
             return false;
         }
-        charac = rscService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
+        charac = mRSCService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
 
         if (!mBluetoothGatt.setCharacteristicNotification(charac, enabled)) {
             return false;
@@ -445,11 +469,11 @@ public final class BluetoothRscp implements BluetoothProfile {
             return false;
         }
         byte [] bytes = intToBytes(cumulativeValue);
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
+
+        if (mRSCService == null) {
             return false;
         }
-        BluetoothGattCharacteristic rscControlPointCharac = rscService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
+        BluetoothGattCharacteristic rscControlPointCharac = mRSCService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
         if (rscControlPointCharac == null) {
             return false;
         }
@@ -471,11 +495,11 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     public void startCalibration() {
         if(VDBG) Log.d(TAG, "startCalibration()");
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
+
+        if (mRSCService == null) {
             return;
         }
-        BluetoothGattCharacteristic rscControlPointCharac = rscService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
+        BluetoothGattCharacteristic rscControlPointCharac = mRSCService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
         if (rscControlPointCharac == null) {
             return;
         }
@@ -500,12 +524,12 @@ public final class BluetoothRscp implements BluetoothProfile {
     }
 
     public void getSupportedSensorLocation() {
+
         if(VDBG) Log.d(TAG, "getSupportedSensorLocation()");
-        BluetoothGattService rscService = mBluetoothGatt.getService(RSC_SERVICE);
-        if (rscService == null) {
+        if (mRSCService == null) {
             return;
         }
-        BluetoothGattCharacteristic rscControlPointCharac = rscService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
+        BluetoothGattCharacteristic rscControlPointCharac = mRSCService.getCharacteristic(RSC_CONTROL_POINT_CHARAC);
         if (rscControlPointCharac == null) {
             return ;
         }
@@ -516,7 +540,7 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     @Override
     public List<BluetoothDevice> getConnectedDevices() {
-        return null;
+        return mConnectedDevicesList;
     }
 
     @Override
@@ -526,6 +550,6 @@ public final class BluetoothRscp implements BluetoothProfile {
 
     @Override
     public int getConnectionState(BluetoothDevice device) {
-        return 0;
+        return mConnectionState;
     }
 }

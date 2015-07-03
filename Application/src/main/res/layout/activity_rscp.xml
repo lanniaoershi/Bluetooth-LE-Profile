@@ -77,7 +77,6 @@
                         android:id="@+id/connected_state"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Unknown"
                         android:textSize="12sp"/>
                 </LinearLayout>
 

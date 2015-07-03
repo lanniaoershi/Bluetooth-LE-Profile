@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-
 public class RscpService extends Service {
 
     private static final String TAG = RscpService.class.getSimpleName();
@@ -32,14 +31,13 @@ public class RscpService extends Service {
     public static final String ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
     public static final String ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE";
 
-
     public static final String RSC_SPEED_DATA = "com.example.android.bluetoothlegatt.RSC_SPEED_DATA";
     public static final String RSC_CADENCE_DATA = "com.example.android.bluetoothlegatt.RSC_CADENCE_DATA";
     public static final String RSC_STRIDE_LENGTH_DATA = "com.example.android.bluetoothlegatt.RSC_STRIDE_LENGTH_DATA";
     public static final String RSC_TOTAL_DISTANCE_DATA = "com.example.android.bluetoothlegatt.RSC_TOTAL_DISTANCE_DATA";
     public static final String RSC_STRIDE_LENGTH_PRESENT = "com.example.android.bluetoothlegatt.RSC_STRIDE_LENGTH_PRESENT";
     public static final String RSC_TOTAL_DISTANCE_PRESENT = "com.example.android.bluetoothlegatt.RSC_TOTAL_DISTANCE_PRESENT";
-    public static final String RSC_WALKING_OR_RUNNING_STATE = "com.example.android.bluetoothlegatt.RSC_WALKING_OR_RUNNING_STATE";
+    public static final String RSC_WALKING_OR_RUNNING = "com.example.android.bluetoothlegatt.RSC_WALKING_OR_RUNNING";
 
     public static final String RSC_FEATURE_STRIDE_LENGTH_SUPPORTED = "com.example.android.bluetoothlegatt.RSC_FEATURE_STRIDE_LENGTH_SUPPORTED";
     public static final String RSC_FEATURE_TOTAL_DISTANCE_SUPPORTED = "com.example.android.bluetoothlegatt.RSC_FEATURE_TOTAL_DISTANCE_SUPPORTED";
@@ -50,33 +48,33 @@ public class RscpService extends Service {
     public static final String RSC_CURRENT_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SENSOR_LOCATION_DATA";
     public static final String RSC_SUPPORTED_SENSOR_LOCATION_DATA = "com.example.android.bluetoothlegatt.RSC_SUPPORTED_SENSOR_LOCATION_DATA";
 
-//    public static final String RSC_SET_CUMULATIVE_VALUE = "com.example.android.bluetoothlegatt.RSC_SET_CUMULATIVE_VALUE";
-//    public static final String RSC_START_SENSOR_CALIBRATION = "com.example.android.bluetoothlegatt.RSC_START_SENSOR_CALIBRATION";
-//    public static final String RSC_UPDATE_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_UPDATE_SENSOR_LOCATION";
-//    public static final String RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
-
-
-
-
     private final BluetoothRscpCallback mRscpCallback = new BluetoothRscpCallback() {
         @Override
         public void onConnectionStateChange(int state, int newState) {
 
-
             if (newState == BluetoothProfile.STATE_CONNECTED) {
+
                 sendBroadcast(new Intent(ACTION_RSC_CONNECTED));
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+
                 sendBroadcast(new Intent(ACTION_RSC_DISCONNECTED));
+
             } else if (newState == BluetoothProfile.STATE_CONNECTING) {
+
                 sendBroadcast(new Intent(ACTION_RSC_CONNECTING));
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTING) {
+
                 sendBroadcast(new Intent(ACTION_RSC_DISCONNECTING));
+
             }
         }
 
         @Override
         public void onRSCMeasurementCharacChange(int speed, int cadence, int strideLength, int totalDistance, boolean isInstantaneousStrideLengthPresent,
-                                                 boolean isTotalDistancePresent, String walkingOrRunningState) {
+                                                 boolean isTotalDistancePresent, String walkingOrRunning) {
+
             Intent intent = new Intent(ACTION_RSC_MEASUREMENT_DATA_AVAILABLE);
             intent.putExtra(RSC_SPEED_DATA, speed);
             intent.putExtra(RSC_CADENCE_DATA, cadence);
@@ -84,24 +82,24 @@ public class RscpService extends Service {
             intent.putExtra(RSC_TOTAL_DISTANCE_DATA, totalDistance);
             intent.putExtra(RSC_STRIDE_LENGTH_PRESENT, isInstantaneousStrideLengthPresent);
             intent.putExtra(RSC_TOTAL_DISTANCE_PRESENT, isTotalDistancePresent);
-            intent.putExtra(RSC_WALKING_OR_RUNNING_STATE, walkingOrRunningState);
+            intent.putExtra(RSC_WALKING_OR_RUNNING, walkingOrRunning);
 
             sendBroadcast(intent);
-
         }
 
         @Override
-        public void onRSCFeatureChange(boolean strideLengthMeasurementSupported,
-                                       boolean totalDistanceMeasurementSupported,
-                                       boolean walkingOrRunningStatusSupported,
-                                       boolean calibrationProcedureSupported,
-                                       boolean multipleSensorLocationSupported) {
+        public void onRSCFeatureChange(boolean isStrideLengthMeasurementSupported,
+                                       boolean isTotalDistanceMeasurementSupported,
+                                       boolean isWalkingOrRunningStatusSupported,
+                                       boolean isCalibrationProcedureSupported,
+                                       boolean isMultipleSensorLocationSupported) {
+
             Intent intent = new Intent(ACTION_RSC_FEATURE_DATA_AVAILABLE);
-            intent.putExtra(RSC_FEATURE_STRIDE_LENGTH_SUPPORTED, strideLengthMeasurementSupported);
-            intent.putExtra(RSC_FEATURE_TOTAL_DISTANCE_SUPPORTED, totalDistanceMeasurementSupported);
-            intent.putExtra(RSC_FEATURE_WALKING_OR_RUNNING_STATUS, walkingOrRunningStatusSupported);
-            intent.putExtra(RSC_FEATURE_CALIBRATION_SUPPORTED, calibrationProcedureSupported);
-            intent.putExtra(RSC_FEATURE_MULTIPLE_SENSOR_SUPPORTED, multipleSensorLocationSupported);
+            intent.putExtra(RSC_FEATURE_STRIDE_LENGTH_SUPPORTED, isStrideLengthMeasurementSupported);
+            intent.putExtra(RSC_FEATURE_TOTAL_DISTANCE_SUPPORTED, isTotalDistanceMeasurementSupported);
+            intent.putExtra(RSC_FEATURE_WALKING_OR_RUNNING_STATUS, isWalkingOrRunningStatusSupported);
+            intent.putExtra(RSC_FEATURE_CALIBRATION_SUPPORTED, isCalibrationProcedureSupported);
+            intent.putExtra(RSC_FEATURE_MULTIPLE_SENSOR_SUPPORTED, isMultipleSensorLocationSupported);
 
             sendBroadcast(intent);
         }
@@ -141,7 +139,7 @@ public class RscpService extends Service {
         @Override
         public void onSupportedSensorLocationGet() {
             Intent intent = new Intent(ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
-            intent.putExtra(RSC_SUPPORTED_SENSOR_LOCATION_DATA,"1248");
+            intent.putExtra(RSC_SUPPORTED_SENSOR_LOCATION_DATA, "1248");
             sendBroadcast(intent);
         }
 
@@ -168,7 +166,6 @@ public class RscpService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return mBinder;
     }
 
@@ -179,7 +176,7 @@ public class RscpService extends Service {
     }
 
     public boolean initialize() {
-        BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
             return false;
@@ -190,7 +187,7 @@ public class RscpService extends Service {
     }
 
     public boolean connect(final String address) {
-        if (mBluetoothAdapter == null && address ==null)
+        if (mBluetoothAdapter == null && address == null)
             return false;
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
@@ -199,7 +196,7 @@ public class RscpService extends Service {
     }
 
     public void disconnect() {
-        if (mBluetoothAdapter == null && mBluetoothRscp ==null)
+        if (mBluetoothAdapter == null && mBluetoothRscp == null)
             return;
 
         mBluetoothRscp.disconnect();
@@ -232,12 +229,12 @@ public class RscpService extends Service {
         mBluetoothRscp.startCalibration();
     }
 
-    public boolean updateSensorLocation (int location) {
+    public boolean updateSensorLocation(int location) {
         return mBluetoothRscp.updateSensorLocation(location);
     }
 
-    public void getSensorLocation() {
-        mBluetoothRscp.getSensorLocation();
+    public boolean getSensorLocation() {
+        return mBluetoothRscp.getSensorLocation();
     }
 
     public void getSupportedFeature() {
@@ -247,6 +244,5 @@ public class RscpService extends Service {
     public void getSupportedSensorLocation() {
         mBluetoothRscp.getSupportedSensorLocation();
     }
-
 
 }

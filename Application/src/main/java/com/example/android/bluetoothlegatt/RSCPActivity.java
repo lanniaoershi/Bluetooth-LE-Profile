@@ -31,8 +31,10 @@ public class RSCPActivity extends Activity {
     private static final String TAG = RSCPActivity.class.getSimpleName();
 
     private static final String SUCCESS = "Success";
-    private static final String FAILED = "Failed";
+    private static final String FAILED = "Failed, pls retry";
     private static final String EXEC = "Execute...";
+
+    private static final int MEASUREMENT_DEFAULT_VALUE = -1;
     private RscpService mRscpService;
     private boolean mConnected = false;
     private String mDeviceAddress;
@@ -66,7 +68,6 @@ public class RSCPActivity extends Activity {
     private Switch mSwitchNotification;
     private Switch mSwitchIndication;
 
-    private boolean mNotifyFlag = true;
     private static boolean mRequestSupportedSensorLocationDone = false;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -106,11 +107,11 @@ public class RSCPActivity extends Activity {
                 mConnectState.setText("Disconnecting.");
             } else if (RscpService.ACTION_RSC_MEASUREMENT_DATA_AVAILABLE.equals(action)) {
 
-                showData(intent.getStringExtra(RscpService.RSC_WALKING_OR_RUNNING_STATE),
-                        intent.getIntExtra(RscpService.RSC_SPEED_DATA, -1),
-                        intent.getIntExtra(RscpService.RSC_CADENCE_DATA, -1),
-                        intent.getIntExtra(RscpService.RSC_STRIDE_LENGTH_DATA, -1),
-                        intent.getIntExtra(RscpService.RSC_TOTAL_DISTANCE_DATA, -1));
+                showData(intent.getStringExtra(RscpService.RSC_WALKING_OR_RUNNING),
+                        intent.getIntExtra(RscpService.RSC_SPEED_DATA, MEASUREMENT_DEFAULT_VALUE),
+                        intent.getIntExtra(RscpService.RSC_CADENCE_DATA, MEASUREMENT_DEFAULT_VALUE),
+                        intent.getIntExtra(RscpService.RSC_STRIDE_LENGTH_DATA, MEASUREMENT_DEFAULT_VALUE),
+                        intent.getIntExtra(RscpService.RSC_TOTAL_DISTANCE_DATA, MEASUREMENT_DEFAULT_VALUE));
 
             } else if (RscpService.ACTION_RSC_FEATURE_DATA_AVAILABLE.equals(action)) {
                 mSLMS.setText(String.valueOf(intent.getBooleanExtra(RscpService.RSC_FEATURE_STRIDE_LENGTH_SUPPORTED, false)));
@@ -184,6 +185,8 @@ public class RSCPActivity extends Activity {
         mStateProgressBar = (ProgressBar) findViewById(R.id.progressbar_for_state);
         mStateTextView = (TextView) findViewById(R.id.action_state);
 
+        mConnectState.setText("Disconnected.");
+
         mStateProgressBar.setIndeterminate(true);
         mStateProgressBar.setVisibility(View.INVISIBLE);
 
@@ -212,7 +215,7 @@ public class RSCPActivity extends Activity {
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
-
+        mSpinner.setSelection(0, false);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -262,7 +265,8 @@ public class RSCPActivity extends Activity {
         mBtnReadSensorLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRscpService.getSensorLocation();
+                boolean state = mRscpService.getSensorLocation();
+                // to do
                 mStateProgressBar.setVisibility(View.VISIBLE);
                 mStateTextView.setText(EXEC);
             }
