@@ -30,6 +30,9 @@ public class RscpService extends Service {
     public static final String ACTION_RSC_UPDATE_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.ACTION_RSC_UPDATE_SENSOR_LOCATION";
     public static final String ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION = "com.example.android.bluetoothlegatt.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION";
     public static final String ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE = "com.example.android.bluetoothlegatt.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE";
+    public static final String ACTION_RSC_SET_NOTIFICATION = "com.example.android.bluetoothlegatt.ACTION_RSC_SET_NOTIFICATION";
+    public static final String ACTION_RSC_SET_INDICATION = "com.example.android.bluetoothlegatt.ACTION_RSC_SET_INDICATION";
+
 
     public static final String RSC_SPEED_DATA = "com.example.android.bluetoothlegatt.RSC_SPEED_DATA";
     public static final String RSC_CADENCE_DATA = "com.example.android.bluetoothlegatt.RSC_CADENCE_DATA";
@@ -88,7 +91,7 @@ public class RscpService extends Service {
         }
 
         @Override
-        public void onRSCFeatureChange(boolean isStrideLengthMeasurementSupported,
+        public void onRSCFeatureGet(boolean isStrideLengthMeasurementSupported,
                                        boolean isTotalDistanceMeasurementSupported,
                                        boolean isWalkingOrRunningStatusSupported,
                                        boolean isCalibrationProcedureSupported,
@@ -152,6 +155,20 @@ public class RscpService extends Service {
         @Override
         public void onServicesDiscovered(int state) {
             Intent intent = new Intent(ACTION_RSC_SERVICES_DISCOVERED);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void onNotificationSet(int value) {
+            Intent intent = new Intent(ACTION_RSC_SET_NOTIFICATION);
+            intent.putExtra("value",value);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void onIndicationSet(int value) {
+            Intent intent = new Intent(ACTION_RSC_SET_INDICATION);
+            intent.putExtra("value",value);
             sendBroadcast(intent);
         }
     };

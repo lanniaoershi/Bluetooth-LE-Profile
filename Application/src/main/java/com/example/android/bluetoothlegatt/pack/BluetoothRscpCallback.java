@@ -14,7 +14,7 @@ public abstract class BluetoothRscpCallback {
                               boolean isTotalDistancePresent,
                               String walkingOrRunningState) {}
 
-    public void onRSCFeatureChange(boolean isStrideLengthMeasurementSupported,
+    public void onRSCFeatureGet(boolean isStrideLengthMeasurementSupported,
                                    boolean isTotalDistanceMeasurementSupported,
                                    boolean isWalkingOrRunningStatusSupported,
                                    boolean isCalibrationProcedureSupported,
@@ -39,5 +39,9 @@ public abstract class BluetoothRscpCallback {
     public void onResponseValueSet(int value) {}
 
     public void onResponseParameter(int param) {}
+
+    public void onNotificationSet(int value) {}
+
+    public void onIndicationSet(int value) {}
 
 }

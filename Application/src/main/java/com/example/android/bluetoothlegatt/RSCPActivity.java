@@ -133,7 +133,7 @@ public class RSCPActivity extends Activity {
                 mStateProgressBar.setVisibility(View.INVISIBLE);
                 mStateTextView.setText(SUCCESS);
             } else if (RscpService.ACTION_RSC_UPDATE_SENSOR_LOCATION.equals(action)) {
-
+                mRscpService.getSensorLocation();
                 mStateProgressBar.setVisibility(View.INVISIBLE);
                 mStateTextView.setText(SUCCESS);
             } else if (RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION.equals(action)) {
@@ -144,7 +144,20 @@ public class RSCPActivity extends Activity {
             } else if (RscpService.ACTION_RSC_SERVICES_DISCOVERED.equals(action)) {
 //                mSwitchIndication.setChecked(true);
                 mSwitchNotification.setChecked(true);
+            } else if (RscpService.ACTION_RSC_SET_NOTIFICATION.equals(action)) {
+                mStateProgressBar.setVisibility(View.INVISIBLE);
+                mStateTextView.setText(SUCCESS);
+                mSwitchNotification.setAlpha(1.0f);
+                mSwitchNotification.setClickable(true);
+
+            } else if (RscpService.ACTION_RSC_SET_INDICATION.equals(action)) {
+
+                mStateProgressBar.setVisibility(View.INVISIBLE);
+                mStateTextView.setText(SUCCESS);
+                mSwitchIndication.setAlpha(1.0f);
+                mSwitchIndication.setClickable(true);
             }
+
 
         }
     };
@@ -200,6 +213,10 @@ public class RSCPActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mRscpService != null) {
                     mRscpService.setCharacteristicNotification(isChecked);
+                    mStateProgressBar.setVisibility(View.VISIBLE);
+                    mStateTextView.setText(EXEC);
+                    mSwitchNotification.setClickable(false);
+                    mSwitchNotification.setAlpha(0.3f);
                 }
             }
         });
@@ -209,6 +226,10 @@ public class RSCPActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mRscpService != null) {
                     mRscpService.setCharacteristicIndication(isChecked);
+                    mStateProgressBar.setVisibility(View.VISIBLE);
+                    mStateTextView.setText(EXEC);
+                    mSwitchIndication.setClickable(false);
+                    mSwitchIndication.setAlpha(0.3f);
                 }
             }
         });
@@ -256,19 +277,18 @@ public class RSCPActivity extends Activity {
         mBtnReadFeature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRscpService.getSupportedFeature();
                 mStateProgressBar.setVisibility(View.VISIBLE);
                 mStateTextView.setText(EXEC);
+                mRscpService.getSupportedFeature();
             }
         });
 
         mBtnReadSensorLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean state = mRscpService.getSensorLocation();
-                // to do
                 mStateProgressBar.setVisibility(View.VISIBLE);
                 mStateTextView.setText(EXEC);
+                mRscpService.getSensorLocation();
             }
         });
 
@@ -352,6 +372,8 @@ public class RSCPActivity extends Activity {
         intentFilter.addAction(RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
         intentFilter.addAction(RscpService.ACTION_RSC_SUPPORTED_SENSOR_LOCATION_DATA_AVAILABLE);
         intentFilter.addAction(RscpService.ACTION_RSC_SERVICES_DISCOVERED);
+        intentFilter.addAction(RscpService.ACTION_RSC_SET_NOTIFICATION);
+        intentFilter.addAction(RscpService.ACTION_RSC_SET_INDICATION);
 
         return intentFilter;
     }

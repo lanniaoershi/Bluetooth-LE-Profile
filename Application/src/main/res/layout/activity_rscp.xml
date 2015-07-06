@@ -139,7 +139,8 @@
                             android:id="@+id/motion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"/>
+                            android:text="0"
+                            android:textColor="@android:color/holo_blue_light"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -154,6 +155,7 @@
 
                         <TextView
                             android:id="@+id/speed"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"/>
@@ -171,6 +173,7 @@
 
                         <TextView
                             android:id="@+id/cadence"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"/>
@@ -188,6 +191,7 @@
 
                         <TextView
                             android:id="@+id/stride_length"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"/>
@@ -206,6 +210,7 @@
 
                         <TextView
                             android:id="@+id/total_distance"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"/>
@@ -259,6 +264,7 @@
                             android:text="stride length mea supp:"/>
 
                         <TextView
+                            android:textColor="@android:color/holo_blue_light"
                             android:id="@+id/stride_length_supported"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -277,6 +283,7 @@
                             android:text="total distance mea supp:"/>
 
                         <TextView
+                            android:textColor="@android:color/holo_blue_light"
                             android:id="@+id/total_distance_supported"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -295,6 +302,7 @@
                             android:text="walking or running status:"/>
 
                         <TextView
+                            android:textColor="@android:color/holo_blue_light"
                             android:id="@+id/walking_or_running_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -313,6 +321,7 @@
                             android:text="calibration supp:"/>
 
                         <TextView
+                            android:textColor="@android:color/holo_blue_light"
                             android:id="@+id/calibration_supported"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -332,6 +341,7 @@
 
                         <TextView
                             android:id="@+id/multi_sensor_supported"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="null"/>
@@ -385,6 +395,7 @@
 
                         <TextView
                             android:id="@+id/sensor_location"
+                            android:textColor="@android:color/holo_blue_light"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="null"/>
