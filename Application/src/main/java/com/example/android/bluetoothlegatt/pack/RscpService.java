@@ -133,16 +133,12 @@ public class RscpService extends Service {
             sendBroadcast(intent);
         }
 
-        @Override
-        public void onRequestSupportedSensorLocation() {
-            Intent intent = new Intent(ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
-            sendBroadcast(intent);
-        }
+
 
         @Override
-        public void onSupportedSensorLocationGet() {
+        public void onSupportedSensorLocationGet(byte[] value) {
             Intent intent = new Intent(ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION);
-            intent.putExtra(RSC_SUPPORTED_SENSOR_LOCATION_DATA, "1248");
+            intent.putExtra(RSC_SUPPORTED_SENSOR_LOCATION_DATA, value);
             sendBroadcast(intent);
         }
 

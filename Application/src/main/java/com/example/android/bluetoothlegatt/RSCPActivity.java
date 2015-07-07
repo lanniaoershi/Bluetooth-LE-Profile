@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.android.bluetoothlegatt.pack.RscpService;
 
+import java.util.ArrayList;
+
 public class RSCPActivity extends Activity {
 
     private static final String TAG = RSCPActivity.class.getSimpleName();
@@ -69,6 +71,8 @@ public class RSCPActivity extends Activity {
     private Switch mSwitchIndication;
 
     private static boolean mRequestSupportedSensorLocationDone = false;
+
+    public byte[] mSupportedSensorLocation;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -138,8 +142,12 @@ public class RSCPActivity extends Activity {
                 mStateTextView.setText(SUCCESS);
             } else if (RscpService.ACTION_RSC_REQUEST_SUPPORTED_SENSOR_LOCATION.equals(action)) {
                 mRequestSupportedSensorLocationDone = true;
+                mSupportedSensorLocation = intent.getByteArrayExtra(RscpService.RSC_SUPPORTED_SENSOR_LOCATION_DATA);
                 mStateProgressBar.setVisibility(View.INVISIBLE);
                 mStateTextView.setText(SUCCESS);
+                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(RSCPActivity.this, R.array.sensor_location, android.R.layout.simple_spinner_dropdown_item);
+                mSpinner.setAdapter(adapter);
+//
 
             } else if (RscpService.ACTION_RSC_SERVICES_DISCOVERED.equals(action)) {
 //                mSwitchIndication.setChecked(true);
@@ -234,9 +242,7 @@ public class RSCPActivity extends Activity {
             }
         });
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sensor_location, android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(adapter);
-        mSpinner.setSelection(0, false);
+
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

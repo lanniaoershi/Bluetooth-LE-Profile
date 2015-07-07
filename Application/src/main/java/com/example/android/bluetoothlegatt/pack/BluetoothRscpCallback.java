@@ -30,9 +30,7 @@ public abstract class BluetoothRscpCallback {
 
     public void onStartCalibration() {}
 
-    public void onRequestSupportedSensorLocation() {}
-
-    public void onSupportedSensorLocationGet() {}
+    public void onSupportedSensorLocationGet(byte[] value) {}
 
     public void onRequestOpCodeSet(int code) {}
 

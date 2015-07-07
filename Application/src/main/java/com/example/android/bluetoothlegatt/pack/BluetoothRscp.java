@@ -192,38 +192,38 @@ public final class BluetoothRscp implements BluetoothProfile {
 
             } else if (characteristic.getUuid().equals(RSC_CONTROL_POINT_CHARAC)) {
 
-                int responseCode = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, RESPONSE_OP_CODE_OFFSET);
+
                 int responseValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, RESPONSE_VALUE_OFFSET);
 
                 switch (responseValue) {
                     case OP_CODE_SET_CUMULATIVE_VALUE:
-                        mBluetoothRscpCallback.onCumulativeValueSet();
                         if (VDBG) Log.d(TAG, "onCumulativeValueSet()");
+                        mBluetoothRscpCallback.onCumulativeValueSet();
                         break;
 
                     case OP_CODE_START_CALIBRATION:
-                        mBluetoothRscpCallback.onStartCalibration();
                         if (VDBG) Log.d(TAG, "onStartCalibration()");
+                        mBluetoothRscpCallback.onStartCalibration();
                         break;
 
                     case OP_CODE_UPDATE_SENSOR_LOCATION:
-                        mBluetoothRscpCallback.onUpdateSensorLocation();
                         if (VDBG) Log.d(TAG, "onUpdateSensorLocation()");
+                        mBluetoothRscpCallback.onUpdateSensorLocation();
                         break;
 
                     case OP_CODE_GET_SUPPORTED_SENSOR_LOCATION:
-                        mBluetoothRscpCallback.onRequestSupportedSensorLocation();
                         if (VDBG) Log.d(TAG, "onRequestSupportedSensorLocation()");
+                        byte[] responseParameter = characteristic.getValue();
+                        mBluetoothRscpCallback.onSupportedSensorLocationGet(responseParameter);
                         break;
                 }
-
                 byte[] responseParameter = characteristic.getValue();
                 StringBuilder aa = new StringBuilder();
                 for (byte i : responseParameter) {
                     aa.append("(").append(i).append(") ");
                 }
-                Log.d("mylog", "responseOpCode = "+responseCode);
                 Log.d("mylog", "responseParameter = " + aa);
+
             }
         }
 
@@ -366,6 +366,7 @@ public final class BluetoothRscp implements BluetoothProfile {
      * @param enabled If true, enable notification.  False otherwise.
      */
     public void setCharacteristicNotification(boolean enabled) {
+
         if (VDBG) Log.d(TAG, "setCharacteristicNotification() " + enabled);
         BluetoothGattCharacteristic charac;
         if (mBluetoothGatt == null) {
@@ -375,6 +376,7 @@ public final class BluetoothRscp implements BluetoothProfile {
         if (mRSCService == null) {
             return;
         }
+
         charac = mRSCService.getCharacteristic(RSC_MEASUREMENT_CHARAC);
 
         if (!mBluetoothGatt.setCharacteristicNotification(charac, enabled)) {
@@ -387,6 +389,7 @@ public final class BluetoothRscp implements BluetoothProfile {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         } else
             descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+
         mBluetoothGatt.writeDescriptor(descriptor);
 
     }
@@ -397,6 +400,7 @@ public final class BluetoothRscp implements BluetoothProfile {
      * @param enabled If true, enable indication.  False otherwise.
      */
     public boolean setCharacteristicIndication(boolean enabled) {
+
         if (VDBG) Log.d(TAG, "setCharacteristicIndication() " + enabled);
         BluetoothGattCharacteristic charac;
         if (mBluetoothGatt == null) {
@@ -411,12 +415,14 @@ public final class BluetoothRscp implements BluetoothProfile {
         if (!mBluetoothGatt.setCharacteristicNotification(charac, enabled)) {
             return false;
         }
+
         BluetoothGattDescriptor descriptor = charac.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
 
         if (enabled) {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
         } else
             descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+
         return mBluetoothGatt.writeDescriptor(descriptor);
 
     }
